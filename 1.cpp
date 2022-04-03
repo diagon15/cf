@@ -1,119 +1,96 @@
+// problem link:
 #include <bits/stdc++.h>
 using namespace std;
+using ll = long long;
+#define fastio    ios_base::sync_with_stdio(false);
+#define endl "\n";
 
-class Trie {
-    public:
-    Trie* next[26];
-    bool endofstr;
-    Trie(){
-        for(int i = 0; i < 26; ++ i) next[i] = NULL;
-        endofstr = false;
+void yes(){ cout<<"YES"<<"\n"; return ;}
+void no(){ cout<<"NO"<<"\n"; return ;}
+template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
+
+
+void _print(int x) { cout<<x;}
+void _print(long long x) { cout<<x;}
+void _print(char x) { cout<<x;}
+void _print(string x) { cout<<x;}
+void _print(bool x) { cout<<x;}
+void _print(size_t x) { cout<<x;}
+
+void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+
+template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+
+
+#define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
+// #define debug(x)
+
+
+void testcase(int test){ // testcasesid
+
+    int n;
+    cin >> n;
+    ll x, y, u, v;
+    map<pair<ll,ll>, ll>mp;
+    ll pos = 0, neg = 0, pos2 = 0, neg2 = 0;
+    for(int i = 0; i < n; ++ i){
+        cin>> x >> y >> u >> v;
+        ll dy = v - y;
+        ll dx = u - x;
+        // int s1 = dy/abs(dy), s2 = dx/abs(dx);
+        // dy =abs(dy);
+        // dx =abs(dx);
+        // cout << "{"<< dx <<","<<dy<< "}\n";
+        ll g = abs(__gcd(dx, dy));
+        dy/= g;
+        dx/= g;
+        // debug(g);
+        // cout << "{"<< dx <<","<<dy<< "}\n";
+        // int sign = s1*s2;
+        // ++ mp[{sign*dx, dy}];
+        if(dx == 0){
+            if(dy > 0) ++pos;
+            else ++neg;
+        }
+        else if(dy == 0){
+            if(dx > 0) ++pos2;
+            else ++ neg2;
+        }
+        else
+            ++ mp[{dx, dy}];
     }
 
-    int addTrie(char ch){
-        int idx = ch - 'a';
-        if(next[idx] == NULL) next[idx] = new Trie();
-        return idx;
+    ll ans = 0;
+    for(auto &u: mp){
+        if(u.first.first > 0){
+            if (mp.find({-u.first.first, -u.first.second}) != mp.end())
+                ans += u.second * mp[{-u.first.first, -u.first.second}];
+        }
     }
-};
+    ans += pos*neg + pos2 * neg2;
+    cout << ans << endl;
 
-class Encrypter {
-public:
+    return;
+}
 
-    vector<char> keys;
-    map<char, int> mp;
-    map<string, vector<char>> mp2;
-    vector<string> values, dictionary;
-    // Trie *t;
 
-    map<string, int > mp3;
-
-    Encrypter(vector<char>& keys, vector<string>& values, vector<string>& dictionary) {
-        this->keys = keys;
-        this->values = values;
-        this->dictionary = dictionary;
-
-        for(int i = 0; i < keys.size(); ++ i){
-            mp[keys[i]] = i;
-            // cout << mp[keys[i]] << " " << keys[i] << endl;
-            mp2[values[i]].push_back(keys[i]);
-
-        }
-/*
-        t = new Trie();
-        Trie *p;
-        for(int i = 0; i < dictionary.size(); ++ i){
-            p = t;
-            for(int j = 0; j < dictionary[i].size(); ++ j){
-                int idx = p->addTrie(dictionary[i][j]);
-                p = p->next[idx];
-            }
-            p->endofstr = true;
-        }
-*/
-        for(int i = 0; i < dictionary.size(); ++ i){
-            ++ mp3[encrypt(dictionary[i])];
-        }
-
+int32_t main(){
+    fastio;
+    int test=1,z=1;
+    cin>>test;
+    while(z<=test){
+        testcase(z); z++;
     }
-
-    string encrypt(string word1) {
-        int n = word1.size();
-        string res = "";
-        for(int i = 0; i < n; ++ i){
-            if(mp.find(word1[i]) != mp.end()){
-                res += values[mp[word1[i]]];
-            }
-        }
-        return res;
-    }
-//  some changes
-    // int decrypt(string word2, int index = 0, Trie* p = NULL) {
-    int decrypt(string word2) {
-    /*
-        if(index == 0) p = t;
-        if(index >= word2.size() and p->endofstr == true) return 1;
-        if(index >= word2.size()) return 0;
-        if(p == NULL) return 0;
-        int res = 0;
-        string str = word2.substr(index, 2);
-        for(auto &u: mp2[str]){
-            int idx = u - 'a';
-            if(p->next[idx] != NULL){
-                res += decrypt(word2, index + 2, p-> next[idx]);
-            }
-        }
-        return res;
-    */
-        // return
-
-    }
-// private:
-
-};
-
-/**
- * Your Encrypter object will be instantiated and called as such:
- * Encrypter* obj = new Encrypter(keys, values, dictionary);
- * string param_1 = obj->encrypt(word1);
- * int param_2 = obj->decrypt(word2);
- */
-
-int main(){
-
-    vector<char> keys{'a', 'b', 'c', 'd'};
-    vector<string> values { "ei", "zf", "ei", "am" };
-    vector<string> dictionary{"abcd", "acbd", "adbc", "badc", "dacb", "cadb", "cbda", "abad"};
-    string word1 = "abcd";
-    string word2 = "eizfeiam";
-    Encrypter *obj = new Encrypter(keys, values, dictionary);
-    // cout << obj->mp['c'] << endl;
-    string param_1 = obj->encrypt(word1);
-    int param_2 = obj->decrypt(word2);
-
-    cout << param_1<< endl;
-    cout << param_2 << endl;
-
-
     return 0;
 }
+/*
+for std::lcm use -std=c++17 to compile locally
+
+g++ *.cpp > log.txt 2>&1
+
+topics:
+*/

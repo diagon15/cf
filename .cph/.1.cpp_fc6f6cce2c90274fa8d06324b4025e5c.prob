@@ -1,0 +1,1 @@
+{"name":"Local: 1","url":"d:\\vs-code\\Cpp\\cf\\1.cpp","tests":[{"id":1649010053728,"input":"3\n2\n0 0 0 1\n1 0 2 0\n3\n0 0 1 1\n1 1 0 0\n1 0 2 0\n6\n0 0 0 1\n1 0 1 2\n2 0 2 3\n3 0 3 -5\n4 0 4 -5\n5 0 5 -5\n","output":"0\n1\n9\n"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\vs-code\\Cpp\\cf\\1.cpp","group":"local","local":true}
