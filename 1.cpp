@@ -64,11 +64,31 @@ void testcase(int test){ // testcasesid
             ++ mp[{dx, dy}];
     }
 
-    ll ans = 0;
-    for(auto &u: mp){
-        if(u.first.first > 0){
-            if (mp.find({-u.first.first, -u.first.second}) != mp.end())
-                ans += u.second * mp[{-u.first.first, -u.first.second}];
+    string encrypt(string word1) {
+        int n = word1.size();
+        string res = "";
+        for(int i = 0; i < n; ++ i){
+            if(mp.find(word1[i]) != mp.end()){
+                res += values[mp[word1[i]]];
+            }
+        }
+        return res;
+    }
+
+    // int decrypt(string word2, int index = 0, Trie* p = NULL) {
+    int decrypt(string word2) {
+    /*
+        if(index == 0) p = t;
+        if(index >= word2.size() and p->endofstr == true) return 1;
+        if(index >= word2.size()) return 0;
+        if(p == NULL) return 0;
+        int res = 0;
+        string str = word2.substr(index, 2);
+        for(auto &u: mp2[str]){
+            int idx = u - 'a';
+            if(p->next[idx] != NULL){
+                res += decrypt(word2, index + 2, p-> next[idx]);
+            }
         }
     }
     ans += pos*neg + pos2 * neg2;
