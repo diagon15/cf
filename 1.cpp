@@ -67,7 +67,7 @@ public:
         }
         return res;
     }
-
+//  some changes
     // int decrypt(string word2, int index = 0, Trie* p = NULL) {
     int decrypt(string word2) {
     /*
