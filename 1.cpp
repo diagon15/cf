@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-
 class Trie {
     public:
     Trie* next[26];
@@ -25,7 +24,9 @@ public:
     map<char, int> mp;
     map<string, vector<char>> mp2;
     vector<string> values, dictionary;
-    Trie *t;
+    // Trie *t;
+
+    map<string, int > mp3;
 
     Encrypter(vector<char>& keys, vector<string>& values, vector<string>& dictionary) {
         this->keys = keys;
@@ -38,7 +39,7 @@ public:
             mp2[values[i]].push_back(keys[i]);
 
         }
-
+/*
         t = new Trie();
         Trie *p;
         for(int i = 0; i < dictionary.size(); ++ i){
@@ -48,6 +49,10 @@ public:
                 p = p->next[idx];
             }
             p->endofstr = true;
+        }
+*/
+        for(int i = 0; i < dictionary.size(); ++ i){
+            ++ mp3[encrypt(dictionary[i])];
         }
 
     }
@@ -63,14 +68,12 @@ public:
         return res;
     }
 
-    int decrypt(string &word2, int index = 0, Trie *p = NULL, map<pair<int, Trie *>, int> &mp4 = map<pair<int, Trie *>, int>)
-    {
+    // int decrypt(string word2, int index = 0, Trie* p = NULL) {
+    int decrypt(string word2) {
+    /*
         if(index == 0) p = t;
         if(index >= word2.size() and p->endofstr == true) return 1;
         if(index >= word2.size()) return 0;
-        if(mp4.find({index, p}) != mp4.end()){
-            return mp4[{index, p}];
-        }
         if(p == NULL) return 0;
         int res = 0;
         string str = word2.substr(index, 2);
@@ -80,12 +83,14 @@ public:
                 res += decrypt(word2, index + 2, p-> next[idx]);
             }
         }
-        return mp4[{index, p}] = res;
+        return res;
+    */
+        return
+
     }
 // private:
 
 };
-
 
 /**
  * Your Encrypter object will be instantiated and called as such:
