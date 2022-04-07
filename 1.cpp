@@ -1,64 +1,89 @@
+// problem link:
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
+#define fastio    ios_base::sync_with_stdio(false);
+#define endl "\n";
 
-const int INF = 1e9 + 7;
-const int H = 400;
-const int W = 400;
-int arr[H][W];
-int sums[H][W + 1];
+void yes(){ cout<<"YES"<<"\n"; return ;}
+void no(){ cout<<"NO"<<"\n"; return ;}
+template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
 
-int main()
-{
-    ios_base::sync_with_stdio(false);
-    cin.tie(0);
 
-    int t;
-    cin >> t;
-    for (int ti = 0; ti < t; ++ti)
-    {
-        int h, w;
-        cin >> h >> w;
+void _print(int x) { cout<<x;}
+void _print(long long x) { cout<<x;}
+void _print(char x) { cout<<x;}
+void _print(string x) { cout<<x;}
+void _print(bool x) { cout<<x;}
+void _print(size_t x) { cout<<x;}
 
-        for (int y = 0; y < h; ++ y)
-        {
-            string str;
-            cin >> str;
-            for (int x = 0; x < w; ++x)
-                arr[y][x] = (str[x] == '1');
-            sums[y][0] = 0;
-            for (int x = 1; x <= w; ++x)
-                sums[y][x] = sums[y][x - 1] + arr[y][x - 1];
+void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+
+template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+
+
+#define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
+// #define debug(x)
+
+
+void testcase(int test){ // testcasesid
+
+    int n;
+    cin >> n;
+
+    string s;
+    cin >> s;
+
+
+    ll num = 0;
+    ll ans = 0;
+
+    ll dp[2][3];
+    memset(dp, 0, sizeof dp);
+    dp[1][0] = 1;
+    for(int i = 0; i < n; ++ i){
+        if(s[i] == '+') -- num;
+        else ++ num;
+
+        ans += dp[num >= 0][abs(num)%3];
+
+        ++ dp[num >= 0][abs(num) % 3];
+        for(int i = 0;i < 2; ++ i){
+            for(int j = 0; j < 3; ++ j) cout << dp[i][j]<< " " ;    cout << endl;
         }
-
-        int res = INF;
-        for (int x0 = 0; x0 < w; ++x0)
-        {
-            for (int x1 = x0 + 3; x1 < w; ++x1)
-            {
-                int len = x1 - x0 - 1;
-
-                array<int, 4> min_cost;
-                min_cost[0] = INF;
-                min_cost[1] = INF;
-                min_cost[2] = INF;
-                min_cost[3] = INF;
-
-                for (int y1 = 0; y1 < h; ++y1)
-                {
-                    int cou = sums[y1][x1] - sums[y1][x0 + 1];
-                    int empt = len - cou;
-                    int sd = 2 - arr[y1][x0] - arr[y1][x1];
-                    int off = min_cost[3] + empt;
-
-                    res = min(res, min_cost[3] + empt);
-                    min_cost[3] = cou + sd + min(min_cost[3], min_cost[2]);
-                    min_cost[2] = cou + sd + min_cost[1];
-                    min_cost[1] = cou + sd + min_cost[0];
-                    min_cost[0] = empt;
-                }
-            }
-        }
-        cout << res << '\n';
+        // debug(ans);
+        cout << ans << endl;
     }
+
+    for(int i = 0;i < 2; ++ i){
+        for(int j = 0; j < 3; ++ j) cout << dp[i][j]<< " " ;    cout << endl;
+    }
+
+    
+
+    cout << ans << endl;
+
+    return;
 }
+
+
+int32_t main(){
+    fastio;
+    int test=1,z=1;
+    cin>>test;
+    while(z<=test){
+        testcase(z); z++;
+    }
+    return 0;
+}
+/*
+for std::lcm use -std=c++17 to compile locally
+
+g++ *.cpp > log.txt 2>&1
+
+topics:
+*/
