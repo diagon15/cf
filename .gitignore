@@ -36,3 +36,4 @@
 
 #ignore all files & folders startin with .
 .*
+!/.gitignore
