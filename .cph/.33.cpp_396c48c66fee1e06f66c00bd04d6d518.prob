@@ -1,1 +1,0 @@
-{"name":"Local: 33","url":"d:\\vs-code\\Cpp\\codeforces\\33.cpp","tests":[{"id":1620225637384,"input":"1\n9999\n94 20 244","output":"0"},{"id":1620279222434,"input":"7\n1101001\n3 4 9 100 1 2 3","output":"109"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\vs-code\\Cpp\\codeforces\\33.cpp","group":"local","local":true}
