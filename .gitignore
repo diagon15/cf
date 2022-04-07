@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+#ignore all folders starting with .
+# .*/
+
+#ignore all files & folders startin with .
+.*
