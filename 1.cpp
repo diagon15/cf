@@ -30,40 +30,83 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 // #define debug(x)
 
 
+template <typename T = int>
+class FenwickTree
+{
+private:
+    int getNext(int i)
+    {
+        return i + (i & (-i));
+    }
+    int getParent(int i)
+    {
+        return i - (i & (-i));
+    }
+
+public:
+    vector<T> data;
+    FenwickTree(){};
+    FenwickTree(int n) : data(n + 1, 0) {}
+
+    void init()
+    {
+        for (int i = 1; i < data.size(); ++i)
+        {
+            int j = getNext(i);
+            if (j < data.size())
+                data[j] += data[i];
+        }
+    }
+
+    T getPrefix(int i)
+    {
+        T sum = data[0];
+        for (; i > 0; i = getParent(i))
+            sum += data[i];
+        return sum;
+    }
+
+    void update(int i, T delta)
+    {
+        for (; i < data.size(); i = getNext(i))
+        {
+            cout << i << " ";
+            data[i] += delta;
+        }
+    }
+};
+
+void pit(FenwickTree <int>f[]){
+    cout <<"hello\n";
+    for(int i = 0; i < 3; ++ i){
+        for(int j = 0; j < f[i].data.size(); ++ i){
+            cout << f[i].data[j] << " ";
+        }
+        cout << endl;
+    }
+    return ;
+}
+
 void testcase(int test){ // testcasesid
 
     int n;
     cin >> n;
+    int m = 2*n + 1;
+    FenwickTree<int> f[3] = {FenwickTree<int>(m), FenwickTree<int>(m), FenwickTree<int>(m)};
+    pit(f);
 
     string s;
     cin >> s;
+    int sum = 0,ans = 0;
 
-
-    ll num = 0;
-    ll ans = 0;
-
-    ll dp[2][3];
-    memset(dp, 0, sizeof dp);
-    dp[1][0] = 1;
     for(int i = 0; i < n; ++ i){
-        if(s[i] == '+') -- num;
-        else ++ num;
+        sum += (s[i] == '+' ? 1 :  -1);
+        f[(sum%3 + 3)%3].update(n + sum, 1);
+        ans += f[(sum%3 + 3)%3].getPrefix(n + sum); // - 0 = same
 
-        ans += dp[num >= 0][abs(num)%3];
-
-        ++ dp[num >= 0][abs(num) % 3];
-        for(int i = 0;i < 2; ++ i){
-            for(int j = 0; j < 3; ++ j) cout << dp[i][j]<< " " ;    cout << endl;
-        }
-        // debug(ans);
-        cout << ans << endl;
+        pit(f);
     }
 
-    for(int i = 0;i < 2; ++ i){
-        for(int j = 0; j < 3; ++ j) cout << dp[i][j]<< " " ;    cout << endl;
-    }
-
-    
 
     cout << ans << endl;
 
