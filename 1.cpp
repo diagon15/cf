@@ -28,87 +28,40 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
-
-
-template <typename T = int>
-class FenwickTree
-{
-private:
-    int getNext(int i)
-    {
-        return i + (i & (-i));
-    }
-    int getParent(int i)
-    {
-        return i - (i & (-i));
-    }
-
-public:
-    vector<T> data;
-    FenwickTree(){};
-    FenwickTree(int n) : data(n + 1, 0) {}
-
-    void init()
-    {
-        for (int i = 1; i < data.size(); ++i)
-        {
-            int j = getNext(i);
-            if (j < data.size())
-                data[j] += data[i];
-        }
-    }
-
-    T getPrefix(int i)
-    {
-        T sum = data[0];
-        for (; i > 0; i = getParent(i))
-            sum += data[i];
-        return sum;
-    }
-
-    void update(int i, T delta)
-    {
-        for (; i < data.size(); i = getNext(i))
-        {
-            cout << i << " ";
-            data[i] += delta;
-        }
-    }
-};
-
-void pit(FenwickTree <int>f[]){
-    cout <<"hello\n";
-    for(int i = 0; i < 3; ++ i){
-        for(int j = 0; j < f[i].data.size(); ++ i){
-            cout << f[i].data[j] << " ";
-        }
-        cout << endl;
-    }
-    return ;
+int c = 5;
+ll query(ll a,ll b){
+    cout << "? " << a << " "<< b << endl;
+    cout.flush();
+    ll res;
+    // cin >> res;
+    res = __gcd(a + c, b + c);
+    return res;
 }
-
 void testcase(int test){ // testcasesid
 
-    int n;
-    cin >> n;
-    int m = 2*n + 1;
-    FenwickTree<int> f[3] = {FenwickTree<int>(m), FenwickTree<int>(m), FenwickTree<int>(m)};
-    pit(f);
+    ll a, b;
+    ll bitpos = 0;
 
-    string s;
-    cin >> s;
-    int sum = 0,ans = 0;
 
-    for(int i = 0; i < n; ++ i){
-        sum += (s[i] == '+' ? 1 :  -1);
-        f[(sum%3 + 3)%3].update(n + sum, 1);
-        ans += f[(sum%3 + 3)%3].getPrefix(n + sum); // - 0 = same
-
-        pit(f);
+    a = 1<<29;
+    ll res , ans = 0;
+    while(bitpos < 29){
+        a = (1<<29)|(1<<bitpos);
+        b = (1<<bitpos);
+        b*=2;
+        res = query(a,b);
+        if((res>>bitpos)&1){
+            ans |=(b);
+        }
+        debug(ans);
+        ++ bitpos;
     }
 
+    res = query(1,1);
+    ans |= ((1<<29)&res);
 
-    cout << ans << endl;
+    cout << "! " << ans << endl;
+    cout.flush();
 
     return;
 }

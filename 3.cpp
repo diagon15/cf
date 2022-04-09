@@ -3,6 +3,7 @@
 using namespace std;
 using ll = long long;
 #define fastio    ios_base::sync_with_stdio(false);
+#define endl "\n";
 
 void yes(){ cout<<"YES"<<"\n"; return ;}
 void no(){ cout<<"NO"<<"\n"; return ;}
@@ -25,99 +26,93 @@ template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i
 template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
 
 
+
+
+template<typename T = int>
+class FenwickTree {
+private:
+    int getNext(int i){
+        return i + (i & (-i));
+    }
+    int getParent(int i){
+        return i - (i & (-i));
+    }
+
+public:
+    vector<T> data;
+
+    FenwickTree(int n): data(n + 1, 0){}
+
+    void init(){
+        for(int i = 1; i < data.size(); ++ i){
+            int j = getNext(i);
+            if(j < data.size())
+                data[j] += data[i];
+        }
+    }
+
+    T getPrefix(int i){
+        T sum = data[0];
+        for(;i > 0; i = getParent(i))
+            sum += data[i];
+        return sum;
+    }
+
+    void update(int i, T delta){
+        for(; i < data.size(); i = getNext(i)){
+            // cout << i << " ";
+            data[i] += delta;
+        }
+
+    }
+};
+
+
+void pit(vector<FenwickTree <int>>&f){
+    // cout <<"hello\n";
+    for(int i = 0; i < 3; ++ i){
+        for(int j = 0; j < f[i].data.size(); ++ j){
+            cout << f[i].data[j] << " ";
+        }
+        cout << endl;
+    }
+    return ;
+}
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
 
-int n, root= - 1;
-vector<int>p;
-
-const int N = 2e5 + 1;
-vector<int>adjlist[N];
-int visited[N];
-int vcnt = 1;
-
-void bfs(int node){
-    if(visited[node]) return;
-
-    queue<int>q;
-    q.push(node);
-
-    while(not q.empty()){
-        int tp = q.front();
-        q.pop();
-        visited[tp] = vcnt;
-        for(auto &adjnode: adjlist[tp]){
-            if( visited[adjnode] == 0){
-                q.push(adjnode);
-            }
-        }
-    }
-    ++ vcnt;
-}
-
-bool dfs(int node,int cnt){
-
-    if(visited[node] == cnt){
-        adjlist[node][0] = node;
-        p[node] = node;
-        return true;
-    }
-    if(visited[node] != 0) return false;
-    visited[node] = cnt;
-
-    for(auto adjnode: adjlist[node]){
-        // if(dfs(adjnode,cnt)) return true;
-        dfs(adjnode,cnt);
-
-    }
-
-    return false;
-}
-
-void hmm(int old[],int n){
-    int ans = 0;
-
-    for(int i = 1; i <= n; ++ i){
-        if(p[i] != old[i]) ++ ans;
-    }
-
-    cout << ans << endl;
-    for(int i = 1; i <= n; ++ i){
-        cout << p[i] << " ";
-    }
-    cout << endl;
-}
-
 void testcase(int test){ // testcasesid
 
+    int n;
     cin >> n;
+    int m = 2*n + 1;
+    // FenwickTree<int>f0(m);
+    // FenwickTree<int>f1(m);
+    // FenwickTree<int>f2(m);
+    // FenwickTree<int>f = f1;
+    vector<FenwickTree<int>> f(3, FenwickTree<int>(m)); // = {};
+    string s;
+    cin >> s;
+    ll sum = 0,ans = 0;
+    // f[0].update(n, 1);
+    // pit(f);
+#if 1
+    for(int i = 0; i < n; ++ i){
+        f[(sum%3 + 3)%3].update(n + sum, 1);
+        sum += (s[i] == '+' ? 1 :  -1);
+        ll res = f[(sum%3 + 3)%3].getPrefix(n * 2); // - 0 = same
+        res -= f[(sum%3 + 3)%3].getPrefix(n + sum - 1); // - 0 = same
+        ans += res;
 
-    p.resize(n + 1);
-    int old[n + 1];
-    for(int i = 1; i <= n; ++ i) {
-        cin >> p[i];
-        old[i] = p[i];
-        if(p[i] == i) root = i;
+        // pit(f);
+        // debug(res);
+        // debug(ans);
+
     }
-
-    // if(root == -1){
-    for(int i = 1; i <= n; ++ i) adjlist[i].push_back(p[i]);// p[i]
-    for(int i = 1; i <= n; ++ i){
-        dfs(i,i);
-    }
-
-    for(int i = 1; i <= n; ++ i) if(p[i] == i) root = i;
-
-    for(int i = 1; i <= n; ++ i){
-        if(p[i] == i and i != root){
-            p[i] = root;
-        }
-    }
-
-    hmm(old, n);
-    return;
+#endif
 
 
+    cout << ans << endl;
 
     return;
 }
@@ -126,7 +121,7 @@ void testcase(int test){ // testcasesid
 int32_t main(){
     fastio;
     int test=1,z=1;
-    // cin>>test;
+    cin>>test;
     while(z<=test){
         testcase(z); z++;
     }
@@ -134,8 +129,6 @@ int32_t main(){
 }
 /*
 for std::lcm use -std=c++17 to compile locally
-
 g++ *.cpp > log.txt 2>&1
-
 topics:
 */

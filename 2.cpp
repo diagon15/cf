@@ -1,4 +1,4 @@
-// problem link:https://codeforces.com/problemset/problem/1580/A
+// problem link:
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
@@ -29,97 +29,67 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
 
-const int N = 401;
-vector<vector<int>> arr(N, vector<int>(N, 0));
-vector<vector<int>> sums(N, vector<int>(N, 0));
-string s[N];
 
-int num_1(int y1, int x1, int y2, int x2){
-    // cout << y1 << " " << x1 << " " << y2 << " " << x2 << endl;
-    return sums[y2][x2] - sums[y2][x1 - 1] - sums[y1 - 1][x2] + sums[y1 - 1][x1 - 1];
-}
-
-int num_0(int y1, int x1, int y2, int x2){
-    return (y2 - y1 + 1) * (x2 - x1 + 1) - num_1(y1, x1, y2, x2);
-}
-void pit(){
-    for(int i = 0; i < sums.size(); ++ i){
-        for(int j = 0; j < sums.back().size(); ++ j){
-            cout << sums[i][j] ;
-            cout <<"\t";
-        }
-        cout << "\n";
+void proc(vector<int>&pr, int &ans){
+    if(pr.size() == 0) return;
+    int last = 0;
+    for(int i = 0; i < pr.size(); ++ i){
+        if(pr[i]== pr[0]) last = i;
+        else break;
     }
-}
-void pit2(vector<vector<int>>& arr){
-    for(int i = 0; i < arr.size(); ++ i){
-        for(int j = 0; j < arr.back().size(); ++ j){
-            cout << arr[i][j] ;
-            // cout <<"\t";
-        }
-        cout << "\n";
-    }
+
+    -- pr[last];
+
+    for(int i = 0; i < pr.size(); ++ i) -- pr[i];
+
+    ++ ans;
+    while(not pr.empty() and pr.back() <= 0) pr.pop_back();
+
+    proc(pr, ans);
 }
 
-#define SOME_MAX_VAL 160005
 void testcase(int test){ // testcasesid
 
-    int n, m;
-    cin >> n >> m;
+    int n;
+    cin >> n;
+    int par[n + 1];
 
-    for(int i = 1; i <= n; ++ i){
-        cin >> s[i];
+    map<int,int>mp;
+    for(int i = 2; i <= n; ++ i){
+        cin >> par[i];
+        ++ mp[par[i]];
+    }
+    vector<int>v;
+
+    for(auto &u:mp){
+        v.push_back(u.second);
     }
 
-    sums = arr;
+    v.push_back(1);
+    sort(v.rbegin(), v.rend());
 
-    for(int i = 1; i <= n; ++ i){
-        for(int j = 1; j <= m; ++ j){
-            arr[i][j] = s[i][j - 1] == '1';
+    int time = v.size();
+    int ans = time, buff = 0;
+    vector<int>pr;
+
+    for(int i = 0 ; i < v.size(); ++ i){
+        int calc = v[i]  - (time - (i));
+        if(calc > 0){
+            pr.push_back(calc);
         }
     }
 
-    for(int i = 1; i <= n; ++ i){
-        for(int j = 1; j <= m; ++ j){
-            sums[i][j] = sums[i - 1][j] + sums[i][j - 1] - sums[i - 1][j - 1] + arr[i][j];
-        }
-    }
-    // pit();
-    // pit2(arr);
-    ll ans = SOME_MAX_VAL;
-    for(int x1 = 1; x1 <= m; ++ x1){
-        for(int x2 = x1 + 3; x2 <= m; ++ x2){
-            ll prev_val = SOME_MAX_VAL;
-            for(int y = 5; y <= n; ++ y){
-                // case1: new reactangle of height = 5
-                ll leftvertical = num_0(y - 3, x1, y - 1, x1);
-                ll rightvertical = num_0(y - 3, x2, y - 1, x2);
-                ll upperhorizontal = num_0(y - 4, x1 + 1, y - 4, x2 - 1);
-                ll lowerhorizontal = num_0(y, x1 + 1, y, x2 - 1);
-                ll innerbox = num_1(y - 3, x1 + 1, y - 1, x2 - 1);
-                ll case1cost = leftvertical + rightvertical + upperhorizontal + lowerhorizontal + innerbox;
+    sort(pr.rbegin(), pr.rend());
 
-                // case2: extend the length by 1 of prev base
-                // ll case2cost = prev_val - num_0(y - 1, x1 + 1, y - 1, x2 - 1) + num_0(y - 1, x1, y - 1, x1)
-                // + num_0(y - 1, x2, y - 1, x2) + num_1(y, x1 + 1, y, x2 - 1) + num_0(y, x1 + 1, y, x2 - 1);
-                ll case2cost = prev_val - num_0(y - 1, x1 + 1, y - 1, x2 - 1) + num_1(y - 1, x1 + 1, y - 1, x2 - 1)
-                + num_0(y - 1, x1, y - 1, x1)
-                + num_0(y - 1, x2, y - 1, x2)
-                + num_0(y, x1 + 1, y, x2 - 1);
-                // + num_1(y, x1 + 1, y, x2 - 1)
+    proc(pr,ans);
 
-                ll curr_cost = min(case1cost, case2cost);
-                ans = min(curr_cost, ans);
-                prev_val = curr_cost;
-                // debug(innerbox);
-                // cout << case1cost << " "<< case2cost << " " << y << " " << x1 << " " << x2 <<endl;
-                // debug(case1cost);
-                // debug(ans);
-            }
-        }
-    }
+    // cout << preans << endl;
 
+    // ans += preans;
     cout << ans << endl;
+
+
+
 
     return;
 }
