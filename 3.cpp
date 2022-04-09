@@ -26,93 +26,32 @@ template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i
 template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
 
 
-
-
-template<typename T = int>
-class FenwickTree {
-private:
-    int getNext(int i){
-        return i + (i & (-i));
-    }
-    int getParent(int i){
-        return i - (i & (-i));
-    }
-
-public:
-    vector<T> data;
-
-    FenwickTree(int n): data(n + 1, 0){}
-
-    void init(){
-        for(int i = 1; i < data.size(); ++ i){
-            int j = getNext(i);
-            if(j < data.size())
-                data[j] += data[i];
-        }
-    }
-
-    T getPrefix(int i){
-        T sum = data[0];
-        for(;i > 0; i = getParent(i))
-            sum += data[i];
-        return sum;
-    }
-
-    void update(int i, T delta){
-        for(; i < data.size(); i = getNext(i)){
-            // cout << i << " ";
-            data[i] += delta;
-        }
-
-    }
-};
-
-
-void pit(vector<FenwickTree <int>>&f){
-    // cout <<"hello\n";
-    for(int i = 0; i < 3; ++ i){
-        for(int j = 0; j < f[i].data.size(); ++ j){
-            cout << f[i].data[j] << " ";
-        }
-        cout << endl;
-    }
-    return ;
-}
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
 
+string to_binary(int n){
+    string strng;
+    while(n!=0){
+        if(n&1) strng+='1'; else    strng+='0';  n>>=1;
+    }
+    reverse(strng.begin(),strng.end());
+    // int len=66-s.length(); string sn; for(int i=0;i<len;i++){     if(i<len) sn+='0'; } sn+=s;
+    return strng;
+    // return sn;   // this returns the binary string with length 66 irrespective of n
+}
+
+
 void testcase(int test){ // testcasesid
 
-    int n;
-    cin >> n;
-    int m = 2*n + 1;
-    // FenwickTree<int>f0(m);
-    // FenwickTree<int>f1(m);
-    // FenwickTree<int>f2(m);
-    // FenwickTree<int>f = f1;
-    vector<FenwickTree<int>> f(3, FenwickTree<int>(m)); // = {};
-    string s;
-    cin >> s;
-    ll sum = 0,ans = 0;
-    // f[0].update(n, 1);
-    // pit(f);
-#if 1
-    for(int i = 0; i < n; ++ i){
-        f[(sum%3 + 3)%3].update(n + sum, 1);
-        sum += (s[i] == '+' ? 1 :  -1);
-        ll res = f[(sum%3 + 3)%3].getPrefix(n * 2); // - 0 = same
-        res -= f[(sum%3 + 3)%3].getPrefix(n + sum - 1); // - 0 = same
-        ans += res;
-
-        // pit(f);
-        // debug(res);
-        // debug(ans);
-
+    vector<int> v { 23, 19, 17, 13, 11, 9, 7, 5, 4 };
+    ll g = v[0], res= 1;
+    for(int i = 0; i < v.size(); ++ i){
+        g = __gcd(g, 1LL*v[i]);
+        res *= v[i];
     }
-#endif
+    cout << g << endl;
+    cout << res << endl;
 
-
-    cout << ans << endl;
 
     return;
 }
@@ -129,6 +68,8 @@ int32_t main(){
 }
 /*
 for std::lcm use -std=c++17 to compile locally
+
 g++ *.cpp > log.txt 2>&1
+
 topics:
 */

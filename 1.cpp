@@ -28,37 +28,40 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
-int c = 5;
+int c = 4;
 ll query(ll a,ll b){
-    cout << "? " << a << " "<< b << endl;
+    // cout << "? " << a << " "<< b << endl;
+    cout << "? " << a << " "<< b << " "; // << endl;
     cout.flush();
     ll res;
     // cin >> res;
     res = __gcd(a + c, b + c);
+    cout << res << endl;
     return res;
 }
+
+const int N = 13;
 void testcase(int test){ // testcasesid
 
+
     ll a, b;
-    ll bitpos = 0;
+    a = 3LL<<N;
+    b = 1LL<<N;
+    int bitpos = N;
+    cout << a << "  " << b <<  endl;
+    ll ans = 0;
+    while(b > 0){
 
+        ll res = query(a, b);
 
-    a = 1<<29;
-    ll res , ans = 0;
-    while(bitpos < 29){
-        a = (1<<29)|(1<<bitpos);
-        b = (1<<bitpos);
-        b*=2;
-        res = query(a,b);
-        if((res>>bitpos)&1){
-            ans |=(b);
+        if((b&res) == 0){
+            ans |= (1<<bitpos);
         }
-        debug(ans);
-        ++ bitpos;
-    }
 
-    res = query(1,1);
-    ans |= ((1<<29)&res);
+        --bitpos;
+        a /= 2;
+        b /= 2;
+    }
 
     cout << "! " << ans << endl;
     cout.flush();
