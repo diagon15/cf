@@ -1,57 +1,97 @@
-// Iterative C++ program to
-// implement Stein's Algorithm
+// problem link:
 #include <bits/stdc++.h>
 using namespace std;
+using ll = long long;
+#define fastio    ios_base::sync_with_stdio(false);
+#define endl "\n";
 
-// Function to implement
-// Stein's Algorithm
-int gcd(int a, int b)
-{
-	/* GCD(0, b) == b; GCD(a, 0) == a,
-	GCD(0, 0) == 0 */
-	if (a == 0)
-		return b;
-	if (b == 0)
-		return a;
+void yes(){ cout<<"YES"<<"\n"; return ;}
+void no(){ cout<<"NO"<<"\n"; return ;}
+template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
 
-	/*Finding K, where K is the
-	greatest power of 2
-	that divides both a and b. */
-	int k;
-	for (k = 0; ((a | b) & 1) == 0; ++k)
-	{
-		a >>= 1;
-		b >>= 1;
-	}
 
-	/* Dividing a by 2 until a becomes odd */
-	while ((a & 1) == 0)
-		a >>= 1;
+void _print(int x) { cout<<x;}
+void _print(long long x) { cout<<x;}
+void _print(char x) { cout<<x;}
+void _print(string x) { cout<<x;}
+void _print(bool x) { cout<<x;}
+void _print(size_t x) { cout<<x;}
 
-	/* From here on, 'a' is always odd. */
-	do
-	{
-		/* If b is even, remove all factor of 2 in b */
-		while ((b & 1) == 0)
-			b >>= 1;
+void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
 
-		/* Now a and b are both odd.
-		Swap if necessary so a <= b,
-		then set b = b - a (which is even).*/
-		if (a > b)
-			swap(a, b); // Swap u and v.
+template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
 
-		b = (b - a);
-	}while (b != 0);
 
-	/* restore common factors of 2 */
-	return a << k;
+#define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
+// #define debug(x)
+
+
+int solve(int idx, int d, int n, vector<int>& v, vector<int>& arr,int cnt){
+    if(arr[idx] == 0)   return 0;
+    if(v[idx] != -1) return v[idx];
+    if(cnt == n + 4) return v[idx] = - (n + 4);
+    v[idx] = 1 + solve((idx + d) % n, d, n, v, arr, cnt + 1);
+    return v[idx];
 }
 
-// Driver code
-int main()
-{
-	int a = 34, b = 17;
-	printf("Gcd of given numbers is %d\n", gcd(a, b));
-	return 0;
+void testcase(int test){ // testcasesid
+
+    int n, d;
+    cin >> n >> d;
+    vector<int> arr(n);
+    int has0 = 0;
+    for(int i= 0; i < n; ++ i) cin >> arr[i], has0 |= (!arr[i]);
+
+    if(!has0) return pnl(-1);
+
+    if(n%d == 0){
+        int one = 0;
+        for(int i = 0; i < d; ++ i){
+            int res = 1;
+            for(int j = i; j < n; j += d){
+                res &= arr[j];
+            }
+            one |= res;
+        }
+        if(one) return pnl(-1); // 1 remains
+    }
+
+    vector<int>v(n, -1);
+    for(int i = 0; i < n; ++ i){
+        if(arr[i] == 0) v[i] = 0;
+        else if(v[i] == -1){
+            // debug(i);
+            v[i] = 1 + solve((i + d)%n, d, n, v, arr, 1);
+        }
+    }
+
+
+    int ans = *max_element(v.begin(), v.end());
+
+    cout << ans << endl;
+
+
+    return;
 }
+
+
+int32_t main(){
+    fastio;
+    int test=1,z=1;
+    cin>>test;
+    while(z<=test){
+        testcase(z); z++;
+    }
+    return 0;
+}
+/*
+for std::lcm use -std=c++17 to compile locally
+
+g++ *.cpp > log.txt 2>&1
+
+topics:
+*/

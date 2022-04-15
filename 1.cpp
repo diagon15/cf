@@ -28,43 +28,66 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
-int c = 4;
-ll query(ll a,ll b){
-    // cout << "? " << a << " "<< b << endl;
-    cout << "? " << a << " "<< b << " "; // << endl;
-    cout.flush();
-    ll res;
-    // cin >> res;
-    res = __gcd(a + c, b + c);
-    cout << res << endl;
-    return res;
+
+
+typedef struct hline {
+    int x1;
+    int x2;
+    int y;
+}hline;
+
+int binary_search(vector<hline>& horizontal, int len){
+    int m = horizontal.size();
+    int lo = 0, hi = m - 1, mid, res = -1;
+    while(lo <= hi){
+        mid = lo + (hi - lo ) / 2;
+        int len_mid = (horizontal[mid].x2 - horizontal[mid].x1 + 1);
+        if(len_mid < len){
+            res = mid;
+            lo = mid + 1;
+        }
+        else{
+            hi = mid - 1;
+        }
+    }
+    // cout << res <<endl;
+    return m - 1 - res;
 }
 
-const int N = 13;
 void testcase(int test){ // testcasesid
 
+    int n, m;
+    cin >> n >> m;
+    vector<int>vertical(n);
 
-    ll a, b;
-    a = 3LL<<N;
-    b = 1LL<<N;
-    int bitpos = N;
-    cout << a << "  " << b <<  endl;
-    ll ans = 0;
-    while(b > 0){
+    for(int i = 0; i < n; ++ i) cin >> vertical[i];
 
-        ll res = query(a, b);
-
-        if((b&res) == 0){
-            ans |= (1<<bitpos);
-        }
-
-        --bitpos;
-        a /= 2;
-        b /= 2;
+    sort(vertical.begin(), vertical.end());
+    const int N = 1e9;
+    vertical.push_back(N);
+    vertical.erase(unique(vertical.begin(), vertical.end()), vertical.end());
+    n = vertical.size();
+    
+    vector<hline> horizontal(m);
+    for(int i = 0; i < m; ++ i){
+        cin >> horizontal[i].x1 >> horizontal[i].x2 >> horizontal[i].y;
     }
 
-    cout << "! " << ans << endl;
-    cout.flush();
+    sort(horizontal.begin(), horizontal.end(),[](const hline &a, const hline &b){
+        return (a.x2 - a.x1) < (b.x2 - b.x1);
+    });
+
+    int ans = N;
+
+    for(int i = 0; i < n; ++ i){
+        int len = vertical[i];
+
+        int cost = binary_search(horizontal, len);
+        ans = min(cost + i, ans);
+    }
+    cout << ans << endl;
+
+
 
     return;
 }
@@ -73,7 +96,7 @@ void testcase(int test){ // testcasesid
 int32_t main(){
     fastio;
     int test=1,z=1;
-    cin>>test;
+    // cin>>test;
     while(z<=test){
         testcase(z); z++;
     }
