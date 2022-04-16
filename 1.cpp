@@ -1,111 +1,56 @@
-// problem link:
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-#define fastio    ios_base::sync_with_stdio(false);
-#define endl "\n";
 
-void yes(){ cout<<"YES"<<"\n"; return ;}
-void no(){ cout<<"NO"<<"\n"; return ;}
-template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
+class Solution {
+public:
 
 
-void _print(int x) { cout<<x;}
-void _print(long long x) { cout<<x;}
-void _print(char x) { cout<<x;}
-void _print(string x) { cout<<x;}
-void _print(bool x) { cout<<x;}
-void _print(size_t x) { cout<<x;}
-
-void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
-void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
-void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
-
-template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
-template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
-template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
-
-
-#define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
-// #define debug(x)
-
-
-typedef struct hline {
-    int x1;
-    int x2;
-    int y;
-}hline;
-
-int binary_search(vector<hline>& horizontal, int len){
-    int m = horizontal.size();
-    int lo = 0, hi = m - 1, mid, res = -1;
-    while(lo <= hi){
-        mid = lo + (hi - lo ) / 2;
-        int len_mid = (horizontal[mid].x2 - horizontal[mid].x1 + 1);
-        if(len_mid < len){
-            res = mid;
-            lo = mid + 1;
+    int maximumScore(vector<int>& scores, vector<vector<int>>& edges) {
+        set<int>st;
+        int n = scores.size();
+        vector<vector<int>>tree(n,vector<int>(0,0));
+        for(auto &u: edges){
+            tree[u[0]].push_back(u[1]);
+            tree[u[1]].push_back(u[0]);
         }
-        else{
-            hi = mid - 1;
+        for(int i = 0; i < n; ++ i){
+            sort(tree[i].begin(), tree[i].end(),[&](const int &a, const int &b){
+                return scores[a] > scores[b];
+            });
         }
+
+        int ans = -1;
+        vector<int>res2;
+        for(auto &e: edges){
+            set<pair<int,int>>st;
+            vector<int>res;
+
+            int sum = 0;
+            for(auto f: e){
+                st.insert({scores[f], f});
+                for(int i = 0; i < min(3, (int)tree[f].size()); ++ i){
+                    int node = tree[f][i];
+                    st.insert({ scores[node], node});
+                }
+            }
+            if(st.size() >= 4){
+                for(auto f: e) st.erase({scores[f], f}), sum += scores[f], res.push_back(f);
+                int other2 = 2;
+                while(other2--){
+                    auto pr = *st.rbegin();
+                    sum += pr.first;
+                    res.push_back(pr.second);
+                    st.erase(pr);
+                }
+                if(ans < sum){
+                    ans = sum;
+                    res2 = res;
+                }
+                // ans= max(ans, sum);
+            }
+        }
+        // for(int i = 0 ;i < res2.size(); ++ i) {
+        //     cout << res2[i] << " ";
+        // }
+        // cout <<endl;
+        return ans;
     }
-    // cout << res <<endl;
-    return m - 1 - res;
-}
-
-void testcase(int test){ // testcasesid
-
-    int n, m;
-    cin >> n >> m;
-    vector<int>vertical(n);
-
-    for(int i = 0; i < n; ++ i) cin >> vertical[i];
-
-    sort(vertical.begin(), vertical.end());
-    const int N = 1e9;
-    vertical.push_back(N);
-    vertical.erase(unique(vertical.begin(), vertical.end()), vertical.end());
-    n = vertical.size();
-    
-    vector<hline> horizontal(m);
-    for(int i = 0; i < m; ++ i){
-        cin >> horizontal[i].x1 >> horizontal[i].x2 >> horizontal[i].y;
-    }
-
-    sort(horizontal.begin(), horizontal.end(),[](const hline &a, const hline &b){
-        return (a.x2 - a.x1) < (b.x2 - b.x1);
-    });
-
-    int ans = N;
-
-    for(int i = 0; i < n; ++ i){
-        int len = vertical[i];
-
-        int cost = binary_search(horizontal, len);
-        ans = min(cost + i, ans);
-    }
-    cout << ans << endl;
-
-
-
-    return;
-}
-
-
-int32_t main(){
-    fastio;
-    int test=1,z=1;
-    // cin>>test;
-    while(z<=test){
-        testcase(z); z++;
-    }
-    return 0;
-}
-/*
-for std::lcm use -std=c++17 to compile locally
-
-g++ *.cpp > log.txt 2>&1
-
-topics:
-*/
+};
