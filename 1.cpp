@@ -1,56 +1,61 @@
-
 class Solution {
 public:
 
+    int l0(int a){
+        int cnt = 0;
+        while(a > 0 and a%10 == 0) a /= 10, ++ cnt;
+        return cnt;
+    }
 
-    int maximumScore(vector<int>& scores, vector<vector<int>>& edges) {
-        set<int>st;
-        int n = scores.size();
-        vector<vector<int>>tree(n,vector<int>(0,0));
-        for(auto &u: edges){
-            tree[u[0]].push_back(u[1]);
-            tree[u[1]].push_back(u[0]);
-        }
+    int f2(int a){
+        int cnt = 0;
+        while(a > 0 and a%2 == 0) ++ cnt;, a/=2;
+        return cnt;
+    }
+    int f5(int b){
+        int cnt = 0;
+        while(b > 0 and B%2 == 0) ++ cnt, b /= 2;
+        return cnt;
+    }
+
+    int maxTrailingZeros(vector<vector<int>>& grid) {
+
+        int n = grid.size();
+        int m = grid[0].size();
+        vector<vector<pair<int,int>>> horizontal(n, vector<pair<int,int>>(m,{0,0})), vertical;
+        vertical = horizontal;
+
         for(int i = 0; i < n; ++ i){
-            sort(tree[i].begin(), tree[i].end(),[&](const int &a, const int &b){
-                return scores[a] > scores[b];
-            });
-        }
-
-        int ans = -1;
-        vector<int>res2;
-        for(auto &e: edges){
-            set<pair<int,int>>st;
-            vector<int>res;
-
-            int sum = 0;
-            for(auto f: e){
-                st.insert({scores[f], f});
-                for(int i = 0; i < min(3, (int)tree[f].size()); ++ i){
-                    int node = tree[f][i];
-                    st.insert({ scores[node], node});
+            for(int j = 0; j < m; ++ j){
+                pair<int,int> pr = {f2(grid[i][j]), f5(grid[i][j])};
+                vertical[i][j] = pr;
+                horizontal[i][j] = pr;
+                if(i != 0){
+                    vertical[i][j].first += vertical[i - 1][j].first;
+                    vertical[i][j].second += vertical[i - 1][j].second;
+                }
+                if(j != 0){
+                    horizontal[i][j].first += horizontal[i][j - 1].first;
+                    horizontal[i][j].second += horizontal[i][j - 1].second;
                 }
             }
-            if(st.size() >= 4){
-                for(auto f: e) st.erase({scores[f], f}), sum += scores[f], res.push_back(f);
-                int other2 = 2;
-                while(other2--){
-                    auto pr = *st.rbegin();
-                    sum += pr.first;
-                    res.push_back(pr.second);
-                    st.erase(pr);
-                }
-                if(ans < sum){
-                    ans = sum;
-                    res2 = res;
-                }
-                // ans= max(ans, sum);
+        }
+
+        int ans = 0;
+        for(int i = 0; i < n; ++ i){
+            for(int j = 0; j < m; ++ j){
+                // left, above
+                int left_above =  min(horizontal[i][j].first + vertical[i][j].first - f2(grid[i][j]), horizontal[i][j].second + vertical[i][j].second - f5(grid[i][j]));
+                int right_above = min(horizontal[i].back().first - horizontal[i][j].first + vertical[i][j].first, horizontal[i].back().second - horizontal[i][j].second + vertical[i][j].second);
+                int left_below = min(horizontal[i][j].first + vertical.back()[j].first - vertical[i][j].first, horizontal[i][j].second + vertical.back()[j].second - vertical[i][j].second);
+                int right_below = min(horizontal[i].back().first - horizontal[i][j].first + vertical.back()[j].first - vertical[i][j].first + f2(grid[i][j]),
+                                      horizontal[i].back().second - horizontal[i][j].second + vertical.back()[j].second - vertical[i][j].second + f5(grid[i][j]) );
+                ans = max({ans, left_above, left_below, right_above, right_below});
             }
         }
-        // for(int i = 0 ;i < res2.size(); ++ i) {
-        //     cout << res2[i] << " ";
-        // }
-        // cout <<endl;
+
+
         return ans;
+
     }
 };
