@@ -37,60 +37,38 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 // #define debug(x)
 
 
-void func(const int a){
-    pnl(a);
-}
-
 void testcase(int test){ // testcasesid
 
-    int n, r, b;
 
-    cin >> n >> r >> b;
+    int n, a, b;
+    cin >> n >> a >> b;
+    ll x[1 + n];
+    x[0] = 0;
+    for(int i = 1; i <= n; ++ i) cin >> x[i];
 
-    // int t1 = r / b;
-    // cout <<  << endl;
-    // int freq = (r) / (b + 1);
-    // freq = (freq - ((b+1)* freq - r)) / b;
-    // while(r > 0 or b > 0){
-    //     for(int i = 0; i < min(freq, r); ++ i) cout << "R";
-    //     r -= freq;
-    //     if(b > 0)
-    //     cout << "B";
-    //     -- b;
-    // }
+    ll cost = 0;
+    cost += x[1] * b;
+    int rem = n - 1;
+    int cap = 0;
+    int conquered = 1;
 
+    while(rem > 0){
+        while(cap + 1 <= conquered and  (x[cap + 1] - x[cap])* a <= (x[cap + 1] - x[cap]) * b * rem){
+            cost += (x[cap + 1] - x[cap]) * a;
+            ++ cap;
+        }
 
-    int num_grps = b + 1;
-    int max_freq_in_each_grp = (r + b) / (b + 1);
-    int empty_last = max_freq_in_each_grp*(b + 1) - r;
-    int last_grp = max_freq_in_each_grp - empty_last;
-    if(empty_last >= b){
-        max_freq_in_each_grp--;
-        last_grp += b;
-        empty_last -= b;
+        cost += (x[conquered + 1] - x[cap]) * b;
+        -- rem;
+        ++ conquered;
     }
-    // debug(max_freq_in_each_grp);
-    // debug(last_grp);
-    string s ="";
-    for(int i = 0; i < b; ++ i){
-        for(int j = 0; j < max_freq_in_each_grp; ++ j) s +="R";
-        s += "B";
-    }
-    for(int i = 0; i < last_grp; ++ i) s += "R";
 
-    cout << s <<endl;
-
+    cout << cost << endl;
 
 
     return;
 }
-/*
 
-RRBRRBRRBRRBRRBRRBR
-
-RRBRRBRRBRRR
-
-*/
 
 int32_t main(){
     fastio;

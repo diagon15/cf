@@ -1,4 +1,4 @@
-// problem link: https://codeforces.com/contest/1594/problem/D
+// problem link:
 #include <bits/stdc++.h>
 using namespace std;
 // #include <ext/pb_ds/assoc_container.hpp>
@@ -36,65 +36,61 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
 
-int c[2];
-bool ok;
-int n , m;
+void dfs(int r, int c, vector<string>& v, vector<vector<bool>> &vis){
+    int n  = v.size();
+    int m = v[0].size();
+    vis[r][c] = true;
+    v[r][c] = 'X';
 
-void dfs(int idx, vector<int>&color, vector<vector<pair<int,int>>>&adj){
-    c[color[idx]] += (idx <= n);
-
-    for(auto x: adj[idx]){
-        if(color[x.first] == -1){
-            color[x.first] = color[idx] ^ x.second;
-            dfs(x.first, color, adj);
-        }
-        else if(color[x.first] != color[idx]^x.second){
-            ok = false;
-            return;
-        }
+    if(r + 1 < n and v[r + 1][c] == '.'){
+        dfs(r + 1, c, v, vis);
+    }
+    if(c + 1 < m and v[r][c + 1] == '.'){
+        dfs(r, c + 1, v, vis);
     }
 
 }
 
+
 void testcase(int test){ // testcasesid
 
+    int n,m;
     cin >> n >> m;
-
-    vector<int>color(n + m + 1, -1);
-    vector<vector<pair<int,int>>>adj(n + m + 1);
-    int fake = n + 1;
-    for(int i = 0; i < m; ++ i){
-        int a,  b;
-        string c;
-        cin >> a >> b >> c;
-
-        if(c == "crewmate"){
-            adj[a].push_back({fake, 1});
-            adj[fake].push_back({a, 1});
-            adj[fake].push_back({b, 1});
-            adj[b].push_back({fake, 1});
-            ++ fake;
-        }
-        else{
-            adj[a].push_back({b, 1});
-            adj[b].push_back({a, 1});
-        }
+    vector<string>v(n);
+    for(int i = 0; i < n; ++ i){
+        cin >> v[i];
     }
 
-    int ans = 0;
-    ok = true;
+    vector<vector<bool>>vis(n, vector<bool>(m, false));
+    dfs(0, 0, v, vis);
 
-    for(int i = 1; i <= n; ++ i){
-        if(color[i] == -1){
-            color[i] = 0;
-            c[0] = 0, c[1] = 0;
-            dfs(i, color, adj);
-            ans += max(c[0], c[1]);
+    int arr[m + 1];
+
+    for(int j = 0; j < m; ++ j){
+        int sum  = 0;
+        for(int i = 0; i < n; ++ i){
+            if(v[i][j] == '.') ++ sum;
         }
+        arr[j + 1] = sum;
     }
+    for(int i = 1 ; i <= m; ++ i) arr[i] += arr[i - 1];
 
-    if(not ok )ans = -1;
-    cout << ans<<endl;
+    for(int i = 0; i < n; ++ i){
+        for(int j = 0 ; j < m; ++ j){
+            cout << v[i][j];
+        }
+        cout <<endl;
+    }
+    int q;
+    cin >> q;
+    while(q){
+        int l, r;
+        cin >> l >> r;
+        // cout << arr[r] - arr[l - 1];
+        if(arr[r] - arr[l - 1] > 0) no();
+        else yes();
+        -- q;
+    }
 
 
     return;
@@ -104,7 +100,7 @@ void testcase(int test){ // testcasesid
 int32_t main(){
     fastio;
     int test=1,z=1;
-    cin>>test;
+    // cin>>test;
     while(z<=test){
         testcase(z); z++;
     }

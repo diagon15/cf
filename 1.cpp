@@ -1,61 +1,102 @@
-class Solution {
-public:
+// problem link:
+#include <bits/stdc++.h>
+using namespace std;
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
 
-    int l0(int a){
-        int cnt = 0;
-        while(a > 0 and a%10 == 0) a /= 10, ++ cnt;
-        return cnt;
-    }
+// template <class T>
+// using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-    int f2(int a){
-        int cnt = 0;
-        while(a > 0 and a%2 == 0) ++ cnt;, a/=2;
-        return cnt;
-    }
-    int f5(int b){
-        int cnt = 0;
-        while(b > 0 and B%2 == 0) ++ cnt, b /= 2;
-        return cnt;
-    }
+using ll = long long;
+#define fastio    ios_base::sync_with_stdio(false);
+#define endl "\n";
 
-    int maxTrailingZeros(vector<vector<int>>& grid) {
+void yes(){ cout<<"YES"<<"\n"; return ;}
+void no(){ cout<<"NO"<<"\n"; return ;}
+template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
 
-        int n = grid.size();
-        int m = grid[0].size();
-        vector<vector<pair<int,int>>> horizontal(n, vector<pair<int,int>>(m,{0,0})), vertical;
-        vertical = horizontal;
 
-        for(int i = 0; i < n; ++ i){
-            for(int j = 0; j < m; ++ j){
-                pair<int,int> pr = {f2(grid[i][j]), f5(grid[i][j])};
-                vertical[i][j] = pr;
-                horizontal[i][j] = pr;
-                if(i != 0){
-                    vertical[i][j].first += vertical[i - 1][j].first;
-                    vertical[i][j].second += vertical[i - 1][j].second;
-                }
-                if(j != 0){
-                    horizontal[i][j].first += horizontal[i][j - 1].first;
-                    horizontal[i][j].second += horizontal[i][j - 1].second;
-                }
+void _print(int x) { cout<<x;}
+void _print(long long x) { cout<<x;}
+void _print(char x) { cout<<x;}
+void _print(string x) { cout<<x;}
+void _print(bool x) { cout<<x;}
+void _print(size_t x) { cout<<x;}
+
+void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+
+template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+
+
+#define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
+// #define debug(x)
+
+
+void testcase(int test){ // testcasesid
+
+    int n, m;
+    cin >> n >> m;
+    vector<string> v(n);
+    for(int i = 0; i < n; ++ i)
+        cin >> v[i];
+
+    int arr[n][m];
+    // fill_n(arr, sizeof arr, 0);
+    fill(&arr[0][0], &arr[0][0] + sizeof(arr), 0);
+
+
+    for(int i = 0;  i < n; ++ i){
+        for(int j = 0; j < m; ++ j){
+            if(i > 0 and j > 0 and v[i][j] == '.' and v[i - 1][j] == 'X' and v[i][j - 1] == 'X'){
+                arr[i][j] = 1;
             }
+            if(i > 0) arr[i][j] += arr[i - 1][j];
         }
-
-        int ans = 0;
-        for(int i = 0; i < n; ++ i){
-            for(int j = 0; j < m; ++ j){
-                // left, above
-                int left_above =  min(horizontal[i][j].first + vertical[i][j].first - f2(grid[i][j]), horizontal[i][j].second + vertical[i][j].second - f5(grid[i][j]));
-                int right_above = min(horizontal[i].back().first - horizontal[i][j].first + vertical[i][j].first, horizontal[i].back().second - horizontal[i][j].second + vertical[i][j].second);
-                int left_below = min(horizontal[i][j].first + vertical.back()[j].first - vertical[i][j].first, horizontal[i][j].second + vertical.back()[j].second - vertical[i][j].second);
-                int right_below = min(horizontal[i].back().first - horizontal[i][j].first + vertical.back()[j].first - vertical[i][j].first + f2(grid[i][j]),
-                                      horizontal[i].back().second - horizontal[i][j].second + vertical.back()[j].second - vertical[i][j].second + f5(grid[i][j]) );
-                ans = max({ans, left_above, left_below, right_above, right_below});
-            }
-        }
-
-
-        return ans;
-
     }
-};
+    debug("fs");
+    // for(int j = 0; j < m; ++ j){
+    //     for(int i = 1; i < n; ++ i){
+    //         arr[i][j] += arr[i - 1][j];
+    //     }
+    // }
+    for(int i = 1; i < m; ++ i) arr[n - 1][i] += arr[n - 1][i - 1];
+
+    int q;
+    cin >> q;
+    while(q>0){
+
+        int l, r;
+        cin >> l >> r;
+        -- l, -- r;
+        int res = arr[n - 1][r] - arr[n - 1][l];
+        if(res > 0) no();
+        else yes();
+
+        -- q;
+    }
+
+    return;
+}
+
+
+int32_t main(){
+    fastio;
+    int test=1,z=1;
+    // cin>>test;
+    while(z<=test){
+        testcase(z); z++;
+    }
+    return 0;
+}
+/*
+for std::lcm use -std=c++17 to compile locally
+
+g++ *.cpp > log.txt 2>&1
+
+topics:
+*/
