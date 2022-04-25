@@ -37,48 +37,108 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 // #define debug(x)
 
 
-void testcase(int test){ // testcasesid
-
-    int n, m;
-    cin >> n >> m;
-    vector<string> v(n);
-    for(int i = 0; i < n; ++ i)
-        cin >> v[i];
-
-    int arr[n][m];
-    // fill_n(arr, sizeof arr, 0);
-    fill(&arr[0][0], &arr[0][0] + sizeof(arr), 0);
-
-
-    for(int i = 0;  i < n; ++ i){
-        for(int j = 0; j < m; ++ j){
-            if(i > 0 and j > 0 and v[i][j] == '.' and v[i - 1][j] == 'X' and v[i][j - 1] == 'X'){
-                arr[i][j] = 1;
-            }
-            if(i > 0) arr[i][j] += arr[i - 1][j];
+#define ll long long
+/*
+template <class T>
+class Fenwick {
+    private:
+    int getNext(int x){
+        return x + ((x) & (-x));
+    }
+    int getParent(int x){
+        return x - (x & (-x));
+    }
+    public:
+    vector<T> data;
+    // Fenwick(int n){data = vector<int>(n + 1, 0); }
+    Fenwick(){}
+    void init(vector<T> &arr){
+    // Fenwick(vector<T> &arr){
+        // data.resize(arr.size(), 0);
+        data = arr;
+        for(int i = 1 ; i < arr.size(); ++ i){
+            int j = getNext(i);
+            if(j < data.size())
+                data[j] += data[i];
         }
     }
-    debug("fs");
-    // for(int j = 0; j < m; ++ j){
-    //     for(int i = 1; i < n; ++ i){
-    //         arr[i][j] += arr[i - 1][j];
-    //     }
-    // }
-    for(int i = 1; i < m; ++ i) arr[n - 1][i] += arr[n - 1][i - 1];
 
-    int q;
-    cin >> q;
-    while(q>0){
-
-        int l, r;
-        cin >> l >> r;
-        -- l, -- r;
-        int res = arr[n - 1][r] - arr[n - 1][l];
-        if(res > 0) no();
-        else yes();
-
-        -- q;
+    void update(int idx, T delta){
+        while(idx < data.size()){
+            data[idx] += delta;
+            idx = getNext(idx);
+        }
     }
+
+    T getPrefixSum(int idx){
+        T sum = data[0];
+        while(idx > 0){
+            sum += data[idx];
+            idx = getParent(idx);
+        }
+        return sum;
+    }
+
+    T rangeSum(int l, int r){
+        return getPrefixSum(r) - getPrefixSum(l - 1);
+    }
+};
+*/
+
+
+template <class T>
+class SparseTable {
+    vector<T> data;
+    vector<vector<T>> spt;
+    int LOG = 0;
+    vector<int>log_val;
+
+    public:
+    SparseTable(vector<T> &arr){
+        data = arr;
+        int n = arr.size();
+        while((1 << LOG) <= n) ++ LOG;
+        spt = vector<vector<T>>(n, vector<T>(LOG));
+        log_val.resize(n + 1);
+
+        log_val[1] = 0;
+        for(int i = 2; i <= n; ++ i) log_val[i] = log_val[i/2] + 1;
+
+        for(int i = 0; i < n; ++ i){
+            spt[i][0] = arr[i];
+        }
+
+        for(int l = 1; l < LOG; ++ l){
+            for(int i = 0; i + (1<<l) - 1 < n; ++ i){
+                spt[i][l] = min(spt[i][l - 1], spt[i + (1 << (l - 1))][l - 1]);
+            }
+        }
+
+    }
+
+    T query(int l,int r){
+        int lg = log_val[r - l + 1];
+
+        return min(spt[l][lg], spt[r - (1<<lg) + 1][lg]);
+    }
+};
+
+void testcase(int test){ // testcasesid
+
+    // Fenwick<int>F;
+    vector<int>v({0,1,2,3,2});
+    // F.init(v);
+    // cout << F.rangeSum(1,4) <<endl;
+    // cout << F.rangeSum(1,3) <<endl;
+
+    SparseTable<int>sp(v);
+
+    cout << sp.query(0, 4) <<endl;
+    cout << sp.query(1, 4) <<endl;
+    cout << sp.query(4, 4) <<endl;
+    cout << sp.query(3, 3) <<endl;
+    cout << sp.query(2, 3) <<endl;
+
 
     return;
 }
