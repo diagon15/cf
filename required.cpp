@@ -36,61 +36,31 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
 
+template<typename T>
+void swap(T ita, T itb){
+    auto tmp = *ita;
+    *ita = *itb;
+    *itb = tmp;
+}
 
 void testcase(int test){ // testcasesid
 
-    int n;
-    cin >> n;
-    vector<int>arr(n), brr(n), crr(n);
-    // int arr[n];
-    // int brr[n];
-    // int crr[n];
-    map<int, int>mpa, mpb;
-    for(int i = 0; i < n; ++ i) cin >> arr[i], mpa[arr[i]] = i;
-    for(int i = 0; i < n; ++ i) cin >> brr[i], mpb[brr[i]] = i;
-    for(int i = 0; i < n; ++ i) cin >> crr[i];
 
-    // set<int>visited;
-    vector<int>visited(n + 1, 0);
-    int cnt = 0;
-    for(int i = 0; i < n; ++ i){
-        if(crr[i] and visited[i] == 0 and (arr[i]^brr[i])){
-            if(brr[i] == crr[i]) swap(arr, brr), swap(mpa, mpb);
-            int val = arr[i];
-            int pos = i;
-            while(visited[pos] == 0){
-                // debug(arr[pos]);
-                // debug(pos);
-                visited[pos] = 1;
-                pos = mpb[arr[pos]];
+    vector<int>v{1,2};
+    // for(int e: v) cout << e << " "; cout <<endl;
+    // // swap(v.begin(), ++ v.begin());
+    // swap(++ v.begin(), v.begin());
+    // for(int e: v) cout << e << " "; cout <<endl;
 
-            }
-            // ++ cnt;
-        }
-        if(crr[i])  visited[i] = 1;
+    deque<int>dq;
+    dq.push_front(1);
+    dq.push_front(2);
+    dq.push_front(3);
+    dq.push_front(4);
+    for(int u: dq){
+        cout << u << endl;
     }
 
-    for(int i= 0; i < n; ++ i){
-        int pos = i;
-        if(visited[pos] == 0 and (arr[i]^brr[i])){
-            while(visited[pos] == 0){
-                visited[pos] = 1;
-                pos = mpa[brr[pos]];
-                // swap(arr,brr);
-            }
-            // debug(i);
-            ++ cnt;
-        }
-    }
-    int ans = 1;
-    // debug(cnt);
-    const int mod = 1e9 + 7;
-    while(cnt > 0){
-        ans *= 2;
-        ans %= mod;
-        -- cnt;
-    }
-    cout << ans << endl;
     return;
 }
 
@@ -98,7 +68,7 @@ void testcase(int test){ // testcasesid
 int32_t main(){
     fastio;
     int test=1,z=1;
-    cin>>test;
+    // cin>>test;
     while(z<=test){
         testcase(z); z++;
     }
@@ -110,19 +80,4 @@ for std::lcm use -std=c++17 to compile locally
 g++ *.cpp > log.txt 2>&1
 
 topics:
-
-1
-6
-1 5 2 4 6 3
-6 5 3 1 4 2
-6 0 0 0 0 0
-0 1 2 3 4 5
-
-1
-10
-1 8 6 2 4 7 9 3 10 5
-1 9 2 3 4 10 8 6 7 5
-1 9 2 3 4 10 8 6 7 5
-
-
 */

@@ -1,109 +1,190 @@
+// problem link:
 #include <bits/stdc++.h>
 using namespace std;
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
 
-#define ll long long
+// template <class T>
+// using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-template <class T>
-class SparseTable {
-    vector<T> data;
-    vector<vector<T>> spt;
-    int LOG = 0;
-    vector<int>log_val;
+using ll = long long;
+#define fastio    ios_base::sync_with_stdio(false);
+#define endl "\n";
 
-    public:
-    SparseTable(){}
+void yes(){ cout<<"YES"<<"\n"; return ;}
+void no(){ cout<<"NO"<<"\n"; return ;}
+template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
 
-    void init(vector<T> &arr){
-        // SparseTable(vector<T> &arr){
-        data = arr;
-        int n = arr.size();
-        while((1 << LOG) <= n) ++ LOG;
-        spt = vector<vector<T>>(n, vector<T>(LOG));
-        log_val.resize(n + 1);
 
-        log_val[1] = 0;
-        for(int i = 2; i <= n; ++ i) log_val[i] = log_val[i/2] + 1;
+void _print(int x) { cout<<x;}
+void _print(long long x) { cout<<x;}
+void _print(char x) { cout<<x;}
+void _print(string x) { cout<<x;}
+void _print(bool x) { cout<<x;}
+void _print(size_t x) { cout<<x;}
 
-        for(int i = 0; i < n; ++ i){
-            spt[i][0] = arr[i];
+void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+
+template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+
+
+#define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
+// #define debug(x)
+
+int n, k;
+int x, y;
+set<int>houses;
+set<int>required;
+vector<vector<int>>tree;
+vector<int>visited;
+
+int dfs(int node){
+    // if(visited[node]) return 0;
+    int res = 0;
+    // debug("dfs");
+    visited[node] = 1;
+    for(auto &child: tree[node]){
+        if(not visited[child]){
+            res |= dfs(child);
         }
+    }
+    if(houses.find(node) != houses.end()) res = 1;
+    // cout << node << " " << res<<endl;
+    if(res) required.insert(node);
+    return res;
+}
 
-        for(int l = 1; l < LOG; ++ l){
-            for(int i = 0; i + (1<<l) - 1 < n; ++ i){
-                spt[i][l] = min(spt[i][l - 1], spt[i + (1 << (l - 1))][l - 1]);
+
+int bfs(int start){
+
+    queue<pair<int,int>>q;
+    for(int i = 0; i < n; ++ i) visited[i] = 0;
+    int shortest_path_xy = - 1;
+    q.push({start, 0});
+    visited[start] = 1;
+    if(start == y) return 0;
+    // debug("bfs");
+    while(not q.empty()){
+        pair<int, int> fr = q.front();
+        q.pop();
+        for(auto &child: treexite[fr.first]){
+            if(not visited[child]){
+                q.push({child, fr.second + 1});
+                visited[child] = 1;
+                if(child == y){
+                    shortest_path_xy = fr.second + 1;
+                    break;
+                }
             }
         }
+        // debug("sfd\n");
+        if(shortest_path_xy != -1) break;
+    }
+    return shortest_path_xy;
+}
+
+/*
+set<int>houses;
+set<int>required;
+vector<vector<int>>tree;
+vector<int>visited;
+
+*/
+void testcase(int test){ // testcasesid
+
+    cin >> n >> k;
+    cin >> x >> y;
+    --x, -- y;
+    tree = vector<vector<int>>();
+    visited = vector<int>();
+    houses = set<int>();
+    required = set<int>();
+
+
+    tree.resize(n, vector<int>(0,0));
+    visited.resize(n,0);
+
+
+    for(int i = 0; i < k; ++ i){
+        int tmp;
+        cin >> tmp;
+        -- tmp;
+        houses.insert(tmp);
+        required.insert(tmp);
     }
 
-    T query(int l,int r){
-        int lg = log_val[r - l + 1];
 
-        return min(spt[l][lg], spt[r - (1<<lg) + 1][lg]);
+    for(int i = 0; i < n - 1; ++ i){
+        int t1, t2;
+        cin >> t1 >> t2;
+        -- t1, -- t2;
+        tree[t1].push_back(t2);
+        tree[t2].push_back(t1);
     }
-};
+    houses.insert(x);
+    houses.insert(y);
+
+    // for(auto &u: houses) cout << u << "| "; cout <<endl;
+    // debug(houses.size());
+    dfs(x);
+
+    // debug(required.size());
+    assert(required.find(x) != required.end());
+    assert(required.find(y) != required.end());
+
+    int shortest_path_xy = bfs(x);
+
+    int ans = 2 * ((int)(required.size()) - 1) - shortest_path_xy;
+
+    cout << ans << endl;
+
+    return;
+}
 
 
-class Solution {
-public:
-    ll mod = 1e9 + 7;
-    vector<pair<ll,int>>smal;
-    ll ans = 0;
-    SparseTable<ll> sp;
-    vector<ll>prefS;
-
-    void preprocess(vector<ll>& nums){
-        for(int i = 0; i < nums.size(); ++ i){
-            smal.push_back(make_pair(nums[i], i));
-        }
-        sort(smal.rbegin(), smal.rend());
-
+int32_t main(){
+    fastio;
+    int test=1,z=1;
+    cin>>test;
+    while(z<=test){
+        testcase(z); z++;
     }
-
-    void solve(int l, int r){
-        if(l <= r and (not smal.empty())){
-            ll rsum = sp.query(l, r); // to get min
-            rsum *= (prefS[r] - (l == 0 ? 0 : prefS[l - 1]));
-
-            cout << l << " " << r << " " << rsum <<endl;
-            ans = max(ans, rsum);
-            int nxt_smaller_idx = smal.back().second;
-            smal.pop_back();
-            if(not smal.empty() and smal.back().second > nxt_smaller_idx){
-                solve(nxt_smaller_idx + 1, r);
-                solve(l, nxt_smaller_idx - 1);
-            }else{
-                solve(l, nxt_smaller_idx - 1);
-                solve(nxt_smaller_idx + 1, r);
-            }
-        }
-        else{
-            // assert(l > r);
-            if(l <=r)
-            cout <<"! " << l << " " << r <<endl;
-        }
-    }
-
-    int maxSumMinProduct(vector<int>& arr) {
-        vector<ll>nums((int)arr.size());
-        for(int i = 0; i < arr.size(); ++ i){
-            nums[i] = arr[i];
-        }
-        preprocess(nums);
-        prefS = nums;
-        for(int i = 1; i < nums.size(); ++ i) prefS[i] += prefS[i - 1];
-
-        sp.init(nums);
-        solve(0, (int)nums.size() - 1);
-
-        return (int)(ans%mod);
-    }
-};
-
-int main(){
-    // vector<int> v { 2, 3, 3, 1, 2 };
-    vector<int> v {1,1,3,2,2,2,1,5,1,5};
-    // vector<int>{0,1,2,3,4,5,6,7,8,9}; 
-    Solution obj;
-    cout << obj.maxSumMinProduct(v) << endl;
     return 0;
 }
+/*
+for std::lcm use -std=c++17 to compile locally
+
+g++ *.cpp > log.txt 2>&1
+
+topics:
+3
+3 1
+1 3
+2
+1 3
+1 2
+6 4
+3 5
+1 6 2 1
+1 3
+3 4
+3 5
+5 6
+5 2
+6 2
+3 2
+5 3
+1 3
+3 4
+3 5
+5 6
+5 2
+
+
+
+*/
