@@ -37,60 +37,53 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 // #define debug(x)
 
 
+
 void testcase(int test){ // testcasesid
 
-    int n;
-    cin >> n;
-    vector<int>arr(n), brr(n), crr(n);
-    // int arr[n];
-    // int brr[n];
-    // int crr[n];
-    map<int, int>mpa, mpb;
-    for(int i = 0; i < n; ++ i) cin >> arr[i], mpa[arr[i]] = i;
-    for(int i = 0; i < n; ++ i) cin >> brr[i], mpb[brr[i]] = i;
-    for(int i = 0; i < n; ++ i) cin >> crr[i];
+    string s;
+    cin >> s;
+    // s += "0";
 
-    // set<int>visited;
-    vector<int>visited(n + 1, 0);
-    int cnt = 0;
+    int n = s.length();
+    // int psum[n + 1];
+    vector<int>psum(n  + 1);
+    psum[0] = 0;
     for(int i = 0; i < n; ++ i){
-        if(crr[i] and visited[i] == 0 and (arr[i]^brr[i])){
-            if(brr[i] == crr[i]) swap(arr, brr), swap(mpa, mpb);
-            int val = arr[i];
-            int pos = i;
-            while(visited[pos] == 0){
-                // debug(arr[pos]);
-                // debug(pos);
-                visited[pos] = 1;
-                pos = mpb[arr[pos]];
+        psum[i + 1] = psum[i] + (s[i] == '1' ? 1 : 0);
+    }
+    vector<int>zeros;
+    zeros.push_back(-1);
+    for(int i = 0; i < n; ++ i) if(s[i] == '0') zeros.push_back(i);
+    zeros.push_back(n);
 
+    // debug(psum);
+
+    int lo = 0, hi = (int)zeros.size() - 2, mid, res = n;
+
+    while(lo <= hi){
+        bool ok = false;
+        mid = lo + (hi - lo) / 2;
+        // calculate the number of 0's  between these many 1's
+        for(int i = 0; i + mid + 1 < (int)zeros.size(); ++ i){
+            int L = zeros[i] + 1;
+            int R = zeros[i + mid + 1] - 1;
+            int ones_inside = psum[R + 1] - psum[L];
+            int ones_outside = psum[n] - ones_inside;
+
+            if(ones_outside <= mid){
+                ok = true;
             }
-            // ++ cnt;
         }
-        if(crr[i])  visited[i] = 1;
+
+        if(ok){
+            hi = mid - 1;
+            res = mid;
+        }
+        else lo = mid + 1;
     }
 
-    for(int i= 0; i < n; ++ i){
-        int pos = i;
-        if(visited[pos] == 0 and (arr[i]^brr[i])){
-            while(visited[pos] == 0){
-                visited[pos] = 1;
-                pos = mpa[brr[pos]];
-                // swap(arr,brr);
-            }
-            // debug(i);
-            ++ cnt;
-        }
-    }
-    int ans = 1;
-    // debug(cnt);
-    const int mod = 1e9 + 7;
-    while(cnt > 0){
-        ans *= 2;
-        ans %= mod;
-        -- cnt;
-    }
-    cout << ans << endl;
+    cout << res << endl;
+
     return;
 }
 
@@ -110,19 +103,4 @@ for std::lcm use -std=c++17 to compile locally
 g++ *.cpp > log.txt 2>&1
 
 topics:
-
-1
-6
-1 5 2 4 6 3
-6 5 3 1 4 2
-6 0 0 0 0 0
-0 1 2 3 4 5
-
-1
-10
-1 8 6 2 4 7 9 3 10 5
-1 9 2 3 4 10 8 6 7 5
-1 9 2 3 4 10 8 6 7 5
-
-
 */
