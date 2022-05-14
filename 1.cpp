@@ -36,88 +36,47 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
 
-void pit(deque<char>dq){
-    while(not dq.empty()){
-        cout << dq.front() << " ";
-        dq.pop_front();
+// maxheap
+template <typename T>
+class Heap <T> {
+    vector<T> heap;
+    int n;
+public:
+    Heap(int power_of_2){
+        n = power_of_2;
     }
-    cout << endl;
-}
+
+    void heapifyUp(){
+        int idx = heap.size() - 1;
+        int parentIdx = (idx - 1) / n;
+        while(heap[parentIdx] < heap[idx]){
+            swap(heap[parentIdx], heap[idx]);
+            idx = parentIdx;
+            parentIdx = (parentIdx - 1) / n;
+        }
+        return ;
+    }
+
+    void heapifyDown(){
+        heap[0] = heap.back();
+
+    }
+
+
+    void insert(T data){
+        heap.push_back(data);
+        heapifyUp();
+    }
+    T pop(){
+        if(heap.empty()) return;
+        T data = heap[0];
+        heapifyDown();
+        return data;
+    }
+
+};
 
 void testcase(int test){ // testcasesid
-
-    string s;
-    cin >> s;
-
-    int zeros = 0, ones_popped = 0;
-    for(int i = 0; i < s.length(); ++ i) zeros += (s[i] == '0' ? 1 : 0);
-
-    deque<char>dq;
-    for(char ch: s){
-        dq.push_back(ch);
-    }
-    while(not dq.empty() and dq.back() == '0') dq.pop_back(), -- zeros;
-    while(not dq.empty() and dq.front() == '0') dq.pop_front(), -- zeros;
-
-    int ans = zeros;
-    int left = 0, right = 0;
-    // pit(dq);
-    while(not dq.empty()){
-        if(left < right){
-            dq.pop_front();
-            ++ left;
-        }
-        else if(left > right){
-            dq.pop_back();
-            ++ right;
-        }
-        else{
-            dq.pop_front();
-            dq.pop_back();
-            ++ left;
-            ++ right;
-        }
-
-        if(not dq.empty() and dq.back() == '0' and dq.front() == '0' and left == right){
-            int z1 = 0, z2 = 0;
-            while(not dq.empty() and dq.front() == '0') dq.pop_front(), ++ z1;
-            while(not dq.empty() and dq.back() == '0') dq.pop_back(), ++ z2;
-            if(z1 > z2){
-                ones_popped += left;
-                left = 0;
-                zeros -= z1;
-                ans = min(ans, max(ones_popped, zeros));
-            }
-            else{
-                ones_popped += right;
-                right = 0;
-                zeros -= z2;
-                ans = min(ans, max(ones_popped, zeros));
-            }
-        }
-        else if(not dq.empty() and dq.front() == '0' and left <= right){
-            while(not dq.empty() and dq.front() == '0') dq.pop_front(), -- zeros;
-            ones_popped += left;
-            left = 0;
-            ans = min(ans, max(ones_popped, zeros));
-        }
-        else if(not dq.empty() and dq.back() == '0' and left >= right){
-            while(not dq.empty() and dq.back() == '0') dq.pop_back(), -- zeros;
-            ones_popped += right;
-            right = 0;
-            ans = min(ans, max(ones_popped, zeros));
-        }
-
-        else {
-            ans = min(ans, max(ones_popped + min(left, right), zeros));
-        }
-        // pit(dq);
-
-    }
-
-
-    cout << ans << endl;
-
 
 
 
