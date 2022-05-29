@@ -1,190 +1,82 @@
-// problem link:
-#include <bits/stdc++.h>
-using namespace std;
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
+// 2D fenwick tree for sub-matrix sum problem
+#include <iostream>
+#include <vector>
 
-// template <class T>
-// using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+class FenwickTree{
+private:
+    // Matrix to store the tree
+    std::vector<std::vector<int>> ft;
 
-using ll = long long;
-#define fastio    ios_base::sync_with_stdio(false);
-#define endl "\n";
-
-void yes(){ cout<<"YES"<<"\n"; return ;}
-void no(){ cout<<"NO"<<"\n"; return ;}
-template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
-
-
-void _print(int x) { cout<<x;}
-void _print(long long x) { cout<<x;}
-void _print(char x) { cout<<x;}
-void _print(string x) { cout<<x;}
-void _print(bool x) { cout<<x;}
-void _print(size_t x) { cout<<x;}
-
-void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
-void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
-void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
-
-template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
-template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
-template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
-
-
-#define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
-// #define debug(x)
-
-int n, k;
-int x, y;
-set<int>houses;
-set<int>required;
-vector<vector<int>>tree;
-vector<int>visited;
-
-int dfs(int node){
-    // if(visited[node]) return 0;
-    int res = 0;
-    // debug("dfs");
-    visited[node] = 1;
-    for(auto &child: tree[node]){
-        if(not visited[child]){
-            res |= dfs(child);
-        }
+public:
+    // Function to get least significant bit
+    int LSB(int x){
+        return x & (-x);
     }
-    if(houses.find(node) != houses.end()) res = 1;
-    // cout << node << " " << res<<endl;
-    if(res) required.insert(node);
-    return res;
-}
 
-
-int bfs(int start){
-
-    queue<pair<int,int>>q;
-    for(int i = 0; i < n; ++ i) visited[i] = 0;
-    int shortest_path_xy = - 1;
-    q.push({start, 0});
-    visited[start] = 1;
-    if(start == y) return 0;
-    // debug("bfs");
-    while(not q.empty()){
-        pair<int, int> fr = q.front();
-        q.pop();
-        for(auto &child: treexite[fr.first]){
-            if(not visited[child]){
-                q.push({child, fr.second + 1});
-                visited[child] = 1;
-                if(child == y){
-                    shortest_path_xy = fr.second + 1;
-                    break;
-                }
+    int query(int x, int y){
+        int sum = 0;
+        for(int x_ = x; x_ > 0; x_ = x_ - LSB(x_)){
+            for(int y_ = y; y_ > 0; y_ = y_ - LSB(y_)){
+                sum = sum + ft[x_][y_];
             }
         }
-        // debug("sfd\n");
-        if(shortest_path_xy != -1) break;
-    }
-    return shortest_path_xy;
-}
-
-/*
-set<int>houses;
-set<int>required;
-vector<vector<int>>tree;
-vector<int>visited;
-
-*/
-void testcase(int test){ // testcasesid
-
-    cin >> n >> k;
-    cin >> x >> y;
-    --x, -- y;
-    tree = vector<vector<int>>();
-    visited = vector<int>();
-    houses = set<int>();
-    required = set<int>();
-
-
-    tree.resize(n, vector<int>(0,0));
-    visited.resize(n,0);
-
-
-    for(int i = 0; i < k; ++ i){
-        int tmp;
-        cin >> tmp;
-        -- tmp;
-        houses.insert(tmp);
-        required.insert(tmp);
+        return sum;
     }
 
-
-    for(int i = 0; i < n - 1; ++ i){
-        int t1, t2;
-        cin >> t1 >> t2;
-        -- t1, -- t2;
-        tree[t1].push_back(t2);
-        tree[t2].push_back(t1);
+    int query(int x1, int y1, int x2, int y2){
+        return (query(x2, y2) - query(x1 - 1, y2) - query(x2, y1 - 1) + query(x1 - 1, y1 - 1));
     }
-    houses.insert(x);
-    houses.insert(y);
 
-    // for(auto &u: houses) cout << u << "| "; cout <<endl;
-    // debug(houses.size());
-    dfs(x);
+    void update(int x, int y, int value){
+        // also update matrix[x][y] if needed.
 
-    // debug(required.size());
-    assert(required.find(x) != required.end());
-    assert(required.find(y) != required.end());
-
-    int shortest_path_xy = bfs(x);
-
-    int ans = 2 * ((int)(required.size()) - 1) - shortest_path_xy;
-
-    cout << ans << endl;
-
-    return;
-}
-
-
-int32_t main(){
-    fastio;
-    int test=1,z=1;
-    cin>>test;
-    while(z<=test){
-        testcase(z); z++;
+        for(int x_ = x; x_ < ft.size(); x_ = x_ + LSB(x_)){
+            for(int y_ = y; y_ < ft[0].size(); y_ = y_ + LSB(y_)){
+                ft[x_][y_] += value;
+            }
+        }
     }
+
+    FenwickTree(std::vector<std::vector<int>> matrix){
+        int n = matrix.size();
+        // matrix must not be empty.
+        int m = matrix[0].size();
+        // Initialize matrix ft
+        ft.assign(m + 1, std::vector<int> (n + 1, 0));
+        for(int i = 0; i < m; ++i){
+            for(int j = 0; j < n; ++j)
+                update(i + 1, j + 1, matrix[i][j]);
+        }
+    }
+};
+
+int main(){
+    //sample code
+    std::vector<std::vector<int>> matrix = {std::vector<int>({1, 1, 2, 2}),
+                              std::vector<int>({3, 3, 4, 4}),
+                              std::vector<int>({5, 5, 6, 6}),
+                              std::vector<int>({7, 7, 8, 8})};
+    FenwickTree ft(matrix);
+    std::cout << "Matrix is\n";
+    for(int i = 0; i < 4; ++i){
+        for(int j = 0; j < 4; ++j)
+            std::cout << matrix[i][j] << ' ';
+        std::cout << '\n';
+    }
+    std::cout << '\n';
+    std::cout << "Sum of submatrix ((2, 2), (4, 4)) is " << ft.query(2, 2, 4, 4) << '\n';
+
+    std::cout << "After changing 3 at (2, 2) to 10, matrix is\n";
+    matrix[2 - 1][2 - 1] += 7;
+    ft.update(2, 2, 7);
+    std::cout << "Matrix is\n";
+    for(int i = 0; i < 4; ++i){
+        for(int j = 0; j < 4; ++j)
+            std::cout << matrix[i][j] << ' ';
+        std::cout << '\n';
+    }
+    std::cout << '\n';
+    std::cout << "Sum of submatrix ((2, 2), (4, 4)) is " << ft.query(2, 2, 4, 4) << '\n';
+
     return 0;
 }
-/*
-for std::lcm use -std=c++17 to compile locally
-
-g++ *.cpp > log.txt 2>&1
-
-topics:
-3
-3 1
-1 3
-2
-1 3
-1 2
-6 4
-3 5
-1 6 2 1
-1 3
-3 4
-3 5
-5 6
-5 2
-6 2
-3 2
-5 3
-1 3
-3 4
-3 5
-5 6
-5 2
-
-
-
-*/
