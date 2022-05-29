@@ -1,64 +1,36 @@
-/**
- *    author:  tourist
- *    created: 23.05.2022 18:39:11
-**/
-#include <bits/stdc++.h>
-
-using namespace std;
-
-#ifdef LOCAL
-#include "algo/debug.h"
-#else
-#define debug(...) 42
-#endif
-
-int main() {
-  ios::sync_with_stdio(false);
-  cin.tie(0);
-  int n;
-  long long x;
-  cin >> n >> x;
-  vector<long long> p10(n);
-  p10[0] = 1;
-  for (int i = 1; i < n; i++) {
-    p10[i] = p10[i - 1] * 10;
-  }
-  long long goal = p10[n - 1];
-  const int inf = (int) 1e9;
-  int ans = inf;
-  function<void(int, long long)> Dfs = [&](int cnt, long long num) {
-    if (cnt >= ans) {
-      return;
-    }
-    if (num >= goal) {
-      ans = cnt;
-      return;
-    }
-    int need = 0;
-    long long tmp = num;
-    while (tmp < goal) {
-      tmp *= 9;
-      need += 1;
-    }
-    if (cnt + need >= ans) {
-      return;
-    }
-    array<bool, 10> has;
-    for (int d = 0; d < 10; d++) {
-      has[d] = false;
-    }
-    tmp = num;
-    while (tmp > 0) {
-      has[tmp % 10] = true;
-      tmp /= 10;
-    }
-    for (int d = 9; d >= 2; d--) {
-      if (has[d]) {
-        Dfs(cnt + 1, num * d);
-      }
-    }
-  };
-  Dfs(0, x);
-  cout << (ans == inf ? -1 : ans) << '\n';
-  return 0;
+#include<cstdio>
+const int maxn=200010;
+int n,q,a[maxn],l[maxn],r[maxn],fa[maxn];
+int find(int i){return fa[i]==i?i:fa[i]=find(fa[i]);}
+void cmin(int&a,int b){b<a?a=b:1;}
+void cmax(int&a,int b){b>a?a=b:1;}
+int main(){
+	scanf("%d%d",&n,&q);
+	for(int i=0;i<=q;i++)l[i]=n,r[i]=0;
+	for(int i=0;i<n;i++){
+		scanf("%d",a+i);
+		cmin(l[a[i]],i);
+		cmax(r[a[i]],i);
+	}
+	for(int i=1;i<=n;i++)fa[i]=i;
+	if(l[q]>r[q]){
+		if(l[0]>r[0]){
+			puts("NO");
+			return 0;
+		}
+		a[l[0]]=q;
+		fa[l[0]]=find(l[0]+1);
+	}
+	for(int i=q;i;i--){
+		for(int j=find(l[i]);j<=r[i];j=find(j)){
+			if(a[j]&&a[j]<i){
+				puts("NO");
+				return 0;
+			}
+			a[j]=i;
+			fa[j]=find(j+1);
+		}
+	}
+	puts("YES");
+	for(int i=0;i<n;i++)printf("%d%c",a[i]?a[i]:1," \n"[i==n-1]);
 }

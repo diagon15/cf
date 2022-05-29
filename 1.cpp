@@ -1,53 +1,113 @@
-class Solution {
-public:
-    int n, m;
-    bool isvalid(int i,int j){
-        return (0 <= i and 0 <= j and i < n and j < m);
+// problem link:
+#include <bits/stdc++.h>
+using namespace std;
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+// template <class T>
+// using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+using ll = long long;
+#define fastio    ios_base::sync_with_stdio(false);
+#define endl "\n";
+
+void yes(){ cout<<"YES"<<"\n"; return ;}
+void no(){ cout<<"NO"<<"\n"; return ;}
+template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
+
+
+void _print(int x) { cout<<x;}
+void _print(long long x) { cout<<x;}
+void _print(char x) { cout<<x;}
+void _print(string x) { cout<<x;}
+void _print(bool x) { cout<<x;}
+void _print(size_t x) { cout<<x;}
+
+void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+
+template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+
+
+#define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
+// #define debug(x)
+int n, m;
+
+int f(int idx){
+    return idx%n;
+}
+
+void testcase(int test){ // testcasesid
+
+
+    cin >> n >> m;
+    // vector<int> arr(n)
+    vector<vector<int>>source(n, vector<int>(0,0));
+    vector<vector<int>>dest(n, vector<int>(0,0));
+    for(int i =0; i < m;++ i){
+        int start, end;
+        cin >> start >> end;
+        -- start, -- end;
+        source[start].push_back(i);
+        dest[end].push_back(i);
     }
 
-    int minimumObstacles(vector<vector<int>>& grid) {
+    // for(auto u: source){ debug(u);}
+    // for(auto u: dest){debug(u);    }
 
 
-        n = grid.size();
-        m = grid[0].size();
+    // return ;
 
-        priority_queue<vector<int>>pq;
-        int visited[n][m];
-        fill_n(&visited[0][0], n*m, 0);
-        // unordered_map<pair<int,int>, int>visited;
+    set<int>st;
+    vector<int>ans(n,0);
+    for(int startpos = 0; startpos < n; ++ startpos){
+        // debug(startpos);
+        st = set<int>();
+        for(int i = startpos, k = 0; k < n; ++ k, ++ i){
+            for(auto src: source[f(i)]){
+                st.insert(src);
+            }
 
-        int ans = -1;
-
-        pq.push({0, 0 , 0});
-        visited[0][0] = 1;
-        int nx[]={0 , 0, -1, 1};
-        int ny[]={1, -1, 0, 0};
-        while(not pq.empty()){
-            const vector<int> tp = pq.top();
-            pq.pop();
-
-            int w =  -tp[0];
-            int i_ = tp[1];
-            int j_ = tp[2];
-            // cout << w << "  " << i_ << " " << j_ << " " <<"\n";
-            for(int i = 0; i < 4; ++ i){
-                int newi = nx[i] + i_;
-                int newj = ny[i] + j_;
-                if((0 <= newi and 0 <= newj and newi < n and newj < m) and not visited[newi][newj]){
-                    if(newi == n - 1 and newj == m - 1){
-                        ans = w;
-                        break;
-                    }
-                    else {
-                        pq.push({-(w + grid[newi][newj]), newi, newj});
-                        // visited[newi][newj] = 1;
-                        visited[newi][newj] = 1;
-                    }
+            for(auto dst: dest[f(i)]){
+                if(st.find(dst) != st.end()){
+                    // ans[startpos] = max(ans[startpos], (dst - startpos + n)%n);
+                    ans[startpos] = max(ans[startpos], k);
+                    st.erase(dst);
+                }
+                else {
+                    ans[startpos] = max(ans[startpos], n + (f(i) + n - startpos)%n);
                 }
             }
-            if(-1 != ans) break;
         }
-
-        return ans;
     }
-};
+
+    for(int i = 0; i < n; ++ i){
+        cout << ans[i] << " " ;
+    }
+    cout <<endl;
+
+
+    return;
+}
+
+
+int32_t main(){
+    fastio;
+    int test=1,z=1;
+    // cin>>test;
+    while(z<=test){
+        testcase(z); z++;
+    }
+    return 0;
+}
+/*
+for std::lcm use -std=c++17 to compile locally
+
+g++ *.cpp > log.txt 2>&1
+
+topics:
+*/
