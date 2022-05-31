@@ -35,60 +35,69 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
-int n, m;
 
-int f(int idx){
-    return idx%n;
-}
 
 void testcase(int test){ // testcasesid
 
+    int n;
+    cin >> n;
+    const int N = 20;
+    multiset<int>v[N];
 
-    cin >> n >> m;
-    // vector<int> arr(n)
-    vector<vector<int>>source(n, vector<int>(0,0));
-    vector<vector<int>>dest(n, vector<int>(0,0));
-    for(int i =0; i < m;++ i){
-        int start, end;
-        cin >> start >> end;
-        -- start, -- end;
-        source[start].push_back(i);
-        dest[end].push_back(i);
-    }
-
-    // for(auto u: source){ debug(u);}
-    // for(auto u: dest){debug(u);    }
-
-
-    // return ;
-
-    set<int>st;
-    vector<int>ans(n,0);
-    for(int startpos = 0; startpos < n; ++ startpos){
-        // debug(startpos);
-        st = set<int>();
-        for(int i = startpos, k = 0; k < n; ++ k, ++ i){
-            for(auto src: source[f(i)]){
-                st.insert(src);
-            }
-
-            for(auto dst: dest[f(i)]){
-                if(st.find(dst) != st.end()){
-                    // ans[startpos] = max(ans[startpos], (dst - startpos + n)%n);
-                    ans[startpos] = max(ans[startpos], k);
-                    st.erase(dst);
-                }
-                else {
-                    ans[startpos] = max(ans[startpos], n + (f(i) + n - startpos)%n);
-                }
-            }
+    for(int i = 0;i  < n; ++ i){
+        int val;
+        cin >> val;
+        for(int j = 0; (val>>j) > 0; ++ j){
+            if((val>>j)&1)  v[j].insert(val);
         }
     }
 
-    for(int i = 0; i < n; ++ i){
-        cout << ans[i] << " " ;
+
+    for(int bit = 19; bit >= 0; -- bit){
+        if(v[bit].empty()) continue;
+
+        int val = *--v[bit].end();
+
+        for(int j = bit - 1; j >= 0; -- j){
+            if((val>>j)&1) continue;
+
+            if(not v[j].empty()){
+                int val2 = *v[j].begin();
+                int new_val = val|val2;
+                int new_val2 = val&val2;
+
+                for(int k = N - 1; k >= 0; -- k){
+                    bool present1 = false, present2 = false;
+                    if((val>>k)&1) v[k].erase(v[k].find(val));
+                    if((val2>>k)&1) v[k].erase(v[k].find(val2));
+                    if((new_val>>k)&1) v[k].insert(new_val);
+                    if((new_val2>>k)&1) v[k].insert(new_val2);
+                }
+                break;
+            }
+        }
     }
-    cout <<endl;
+    ll ans = 0;
+    vector<int>arr;
+    for(int bit = 0; bit < N; ++ bit){
+        if(v[bit].empty()) continue;
+
+        for(auto u: v[bit]){
+            int val = u;
+            for(int j = bit + 1; j < N; ++ j){
+                if((val>>j)&1) v[j].erase(v[j].find(val));
+            }
+            arr.push_back(val);
+            ans += val *1LL* val;
+        }
+    }
+
+    // debug(arr);5
+
+
+    cout << ans << endl;
+
+
 
 
     return;

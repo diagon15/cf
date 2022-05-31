@@ -15,7 +15,7 @@ using ll = long long;
 void yes(){ cout<<"YES"<<"\n"; return ;}
 void no(){ cout<<"NO"<<"\n"; return ;}
 template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
-
+// std::apply([](auto&&... args) {((cout << args <<" "), ...); }, tp); // tuple print
 
 void _print(int x) { cout<<x;}
 void _print(long long x) { cout<<x;}
@@ -37,59 +37,37 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 // #define debug(x)
 
 
-void testcase(int test){ // testcase
-
-    int n, m;
-    cin >> n >> m;
-    vector<vector<int>> dest(n, vector<int>(0, 0));
-    vector<set<pair<int,int>>> source(n, set<pair<int,int>>());
-    set<int>remaining;
-
-    for(int i = 0; i < m; ++ i){
-        int start, end;
-        cin >> start >> end;
-        --start, --end;
-        source[start].insert({ (start - end + n)%n , i});
-        dest[end].push_back(i);
-        remaining.insert(i);
-    }
-
-    vector<set<pair<int,int>>>reset_source = source;
-
-    set<int>st;
+void testcase(int test){ // testcasesid
 
 
-    for(int startpos = 0; startpos < n; ++ startpos){
-        set<int> rem = remaining;
-        st = set<int>();
-        source = reset_source;
-        // return;
-        int ans = 0;
-        int idx = startpos;
-        while(not rem.empty()){
-
-            if(not source[idx].empty()){
-                auto chosen = *source[idx].begin();
-                st.insert(chosen.second);
-                source[idx].erase(chosen);
-            }
-            // debug(st.size());
-            // for(auto u: st) cout << u << " " ; cout << endl;
-            for(auto u: dest[idx]){
-                if(st.find(u) != st.end()){
-                    rem.erase(u);
-                    st.erase(u);
-                }
-            }
-            if(rem.size()) ++ ans;
-            // debug(rem.size());
-
-            idx = (idx + 1)%n;
+    int n;
+    cin >> n;
+    int N = 20;
+    vector<int>v(N, 0);
+    for(int i = 0; i < n; ++ i){
+        int val;
+        cin >> val;
+        for(int j = 0; (val>>j) > 0; ++ j){
+            if((val>>j)&1) ++ v[j];
         }
-        cout << ans << " " ;
     }
-    cout << endl;
 
+    ll ans = 0;
+    int times = *max_element(v.begin(), v.end());
+
+    while(times){
+        -- times;
+        ll res = 0;
+        for(int i = 0; i < N; ++ i){
+            if(v[i] > 0){
+                -- v[i];
+                res |= (1<<i);
+            }
+        }
+        ans += res* 1LL * res;
+    }
+
+    cout << ans << endl;
 
     return;
 }

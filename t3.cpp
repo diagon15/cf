@@ -15,7 +15,7 @@ using ll = long long;
 void yes(){ cout<<"YES"<<"\n"; return ;}
 void no(){ cout<<"NO"<<"\n"; return ;}
 template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
-
+// std::apply([](auto&&... args) {((cout << args <<" "), ...); }, tp); // tuple print
 
 void _print(int x) { cout<<x;}
 void _print(long long x) { cout<<x;}
