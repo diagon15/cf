@@ -15,7 +15,7 @@ using ll = long long;
 void yes(){ cout<<"YES"<<"\n"; return ;}
 void no(){ cout<<"NO"<<"\n"; return ;}
 template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
-
+// std::apply([](auto&&... args) {((cout << args <<" "), ...); }, tp); // tuple print
 
 void _print(int x) { cout<<x;}
 void _print(long long x) { cout<<x;}
@@ -38,65 +38,73 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 
 void testcase(int test){ // testcasesid
+// https://codeforces.com/problemset/problem/1023/D
+    int n, q;
+    cin >> n >> q;
+    int arr[n];
+    int any0idx = -1;
+    for(int i = 0; i < n; ++ i){
+        cin >> arr[i];
+        if(arr[i] == 0) any0idx = i;
+    }
 
-    int n;
-    cin >> n;
-    const int N = 20;
-    multiset<int>v[N];
+    int mark[n] = {0};
 
-    for(int i = 0;i  < n; ++ i){
-        int val;
-        cin >> val;
-        for(int j = 0; (val>>j) > 0; ++ j){
-            if((val>>j)&1)  v[j].insert(val);
+    int left[q + 1];
+    int right[q + 1];
+    fill_n(&left[0], q + 1, -1);
+    fill_n(&right[0], q + 1, -1);
+
+    for(int i = 0; i < n; ++ i){
+        right[arr[i]] = i;
+    }
+    for(int i = n - 1; i >= 0;  -- i){
+        left[arr[i]] = i;
+    }
+    // map<int, pair<int,int>>mp;
+
+    if(left[q] ==  -1){
+        if(any0idx == -1) return no();
+        else{
+            arr[any0idx] = q;
+            left[q] = any0idx;
+            right[q] = any0idx;
         }
     }
 
 
-    for(int bit = 19; bit >= 0; -- bit){
-        if(v[bit].empty()) continue;
+    while(q){
 
-        int val = *--v[bit].end();
-
-        for(int j = bit - 1; j >= 0; -- j){
-            if((val>>j)&1) continue;
-
-            if(not v[j].empty()){
-                int val2 = *v[j].begin();
-                int new_val = val|val2;
-                int new_val2 = val&val2;
-
-                for(int k = N - 1; k >= 0; -- k){
-                    bool present1 = false, present2 = false;
-                    if((val>>k)&1) v[k].erase(v[k].find(val));
-                    if((val2>>k)&1) v[k].erase(v[k].find(val2));
-                    if((new_val>>k)&1) v[k].insert(new_val);
-                    if((new_val2>>k)&1) v[k].insert(new_val2);
-                }
-                break;
+        int lptr = left[q], rptr = right[q];
+        while(lptr < rptr){
+            if(arr[lptr] == q or arr[lptr] == 0){
+                mark[lptr] = q;
+                arr[lptr] = q;
+                ++ lptr;
             }
-        }
-    }
-    ll ans = 0;
-    vector<int>arr;
-    for(int bit = 0; bit < N; ++ bit){
-        if(v[bit].empty()) continue;
-
-        for(auto u: v[bit]){
-            int val = u;
-            for(int j = bit + 1; j < N; ++ j){
-                if((val>>j)&1) v[j].erase(v[j].find(val));
+            else if(mark[lptr] > q){
+                lptr = right[mark[lptr]] + 1;
             }
-            arr.push_back(val);
-            ans += val *1LL* val;
+            else return no();
         }
+            // debug(lptr);
+            // debug(rptr);
+
+        if(lptr != rptr) return no();
+        mark[rptr] = q;
+
+        -- q;
     }
 
-    // debug(arr);5
+    for(int i  = 0; i < n; ++ i){
+        if(arr[i] == 0) arr[i] = 1;
+    }
 
-
-    cout << ans << endl;
-
+    yes();
+    for(int i = 0; i < n; ++ i){
+        cout << arr[i] << " " ;
+    }
+    cout << endl;
 
 
 
