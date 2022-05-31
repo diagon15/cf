@@ -38,74 +38,37 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 
 void testcase(int test){ // testcasesid
-// https://codeforces.com/problemset/problem/1023/D
-    int n, q;
-    cin >> n >> q;
-    int arr[n];
-    int any0idx = -1;
-    for(int i = 0; i < n; ++ i){
-        cin >> arr[i];
-        if(arr[i] == 0) any0idx = i;
+// https://codeforces.com/problemset/problem/978/G
+    int n, m;
+    cin >> n >> m;
+    map<int,bool>exam_day;
+    vector<tuple<int,int,int>>info(m);
+    for(int i = 0; i < m; ++ i){
+        int s, d, c;
+        cin >> s >> d >> c;
+        exam_day[d] = true;
+        info[i] = tuple<int,int,int>{s,d,c};
     }
 
-    int mark[n] = {0};
+    priority_queue<tuple<int,int>>pq;
+    // (-prep_remaining, -deadline)
 
-    int left[q + 1];
-    int right[q + 1];
-    fill_n(&left[0], q + 1, -1);
-    fill_n(&right[0], q + 1, -1);
+    int ans[n + 1];
 
-    for(int i = 0; i < n; ++ i){
-        right[arr[i]] = i;
-    }
-    for(int i = n - 1; i >= 0;  -- i){
-        left[arr[i]] = i;
-    }
-    // map<int, pair<int,int>>mp;
+    for(int day = 1; day <= n; ++ day){
 
-    if(left[q] ==  -1){
-        if(any0idx == -1) return no();
+        if(pq.empty()) ans[day] = 0;
+        else if(exam_day[day]){
+            if(get<1>(pq.top())*-1 <= day){
+                return pnl(-1);
+            }
+            ans[day] = m + 1;
+        }
         else{
-            arr[any0idx] = q;
-            left[q] = any0idx;
-            right[q] = any0idx;
+
         }
+
     }
-
-
-    while(q){
-
-        int lptr = left[q], rptr = right[q];
-        while(lptr < rptr){
-            if(arr[lptr] == q or arr[lptr] == 0){
-                mark[lptr] = q;
-                arr[lptr] = q;
-                ++ lptr;
-            }
-            else if(mark[lptr] > q){
-                lptr = right[mark[lptr]] + 1;
-            }
-            else return no();
-        }
-            // debug(lptr);
-            // debug(rptr);
-
-        if(lptr != rptr) return no();
-        mark[rptr] = q;
-
-        -- q;
-    }
-
-    for(int i  = 0; i < n; ++ i){
-        if(arr[i] == 0) arr[i] = 1;
-    }
-
-    yes();
-    for(int i = 0; i < n; ++ i){
-        cout << arr[i] << " " ;
-    }
-    cout << endl;
-
 
 
     return;
@@ -115,7 +78,7 @@ void testcase(int test){ // testcasesid
 int32_t main(){
     fastio;
     int test=1,z=1;
-    // cin>>test;
+    cin>>test;
     while(z<=test){
         testcase(z); z++;
     }
