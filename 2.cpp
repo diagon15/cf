@@ -1,36 +1,111 @@
-#include<cstdio>
-const int maxn=200010;
-int n,q,a[maxn],l[maxn],r[maxn],fa[maxn];
-int find(int i){return fa[i]==i?i:fa[i]=find(fa[i]);}
-void cmin(int&a,int b){b<a?a=b:1;}
-void cmax(int&a,int b){b>a?a=b:1;}
-int main(){
-	scanf("%d%d",&n,&q);
-	for(int i=0;i<=q;i++)l[i]=n,r[i]=0;
-	for(int i=0;i<n;i++){
-		scanf("%d",a+i);
-		cmin(l[a[i]],i);
-		cmax(r[a[i]],i);
-	}
-	for(int i=1;i<=n;i++)fa[i]=i;
-	if(l[q]>r[q]){
-		if(l[0]>r[0]){
-			puts("NO");
-			return 0;
-		}
-		a[l[0]]=q;
-		fa[l[0]]=find(l[0]+1);
-	}
-	for(int i=q;i;i--){
-		for(int j=find(l[i]);j<=r[i];j=find(j)){
-			if(a[j]&&a[j]<i){
-				puts("NO");
-				return 0;
-			}
-			a[j]=i;
-			fa[j]=find(j+1);
-		}
-	}
-	puts("YES");
-	for(int i=0;i<n;i++)printf("%d%c",a[i]?a[i]:1," \n"[i==n-1]);
+// problem link:
+#include <bits/stdc++.h>
+using namespace std;
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+
+// template <class T>
+// using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+using ll = long long;
+#define fastio    ios_base::sync_with_stdio(false);
+#define endl "\n";
+
+void yes(){ cout<<"YES"<<"\n"; return ;}
+void no(){ cout<<"NO"<<"\n"; return ;}
+template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
+// std::apply([](auto&&... args) {((cout << args <<" "), ...); }, tp); // tuple print
+
+void _print(int x) { cout<<x;}
+void _print(long long x) { cout<<x;}
+void _print(char x) { cout<<x;}
+void _print(string x) { cout<<x;}
+void _print(bool x) { cout<<x;}
+void _print(size_t x) { cout<<x;}
+
+void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+
+template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+
+
+#define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
+// #define debug(x)
+
+vector<vector<int>>tree;
+vector<int>visited, a, b;
+int ans;
+
+void dfs(int node,int color){
+    visited[node] = 1;
+    if(color != b[node]){
+        color = 1 - color;
+        debug(node);
+        ++ ans;
+    }
+    else {
+        int num_childs = (int) tree[node].size() - 1;
+
+    }
+
+    for(auto child: tree[node]){
+        if(not visited[child]){
+            dfs(child, color);
+        }
+    }
+    return;
 }
+
+
+void testcase(int test){ // testcasesid
+
+    int n;
+    cin >> n;
+
+    tree = vector<vector<int>>(n, vector<int>());
+    visited = vector<int>(n,0);
+    ans = 0;
+    a = vector<int>(n);
+    b = vector<int>(n);
+
+    for(int i = 0; i < n; ++ i) cin >> a[i];
+    for(int i = 0; i < n; ++ i) cin >> b[i];
+
+
+    for(int i = 0; i < n - 1; ++ i){
+        int t1, t2;
+        cin >> t1 >> t2;
+        -- t1, -- t2;
+        tree[t1].push_back(t2);
+        tree[t2].push_back(t1);
+    }
+
+
+
+    dfs(0, a[0]);
+    cout << ans << endl;
+
+    return;
+}
+
+
+int32_t main(){
+    fastio;
+    int test=1,z=1;
+    cin>>test;
+    while(z<=test){
+        testcase(z); z++;
+    }
+    return 0;
+}
+/*
+for std::lcm use -std=c++17 to compile locally
+
+g++ *.cpp > log.txt 2>&1
+
+topics:
+*/

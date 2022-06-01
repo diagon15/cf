@@ -36,41 +36,67 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
 
+int r = 1e9, col = -1;
 
 void testcase(int test){ // testcasesid
-// https://codeforces.com/problemset/problem/978/G
-    int n, m;
-    cin >> n >> m;
-    map<int,bool>exam_day;
-    vector<tuple<int,int,int>>info(m);
-    for(int i = 0; i < m; ++ i){
-        int s, d, c;
-        cin >> s >> d >> c;
-        exam_day[d] = true;
-        info[i] = tuple<int,int,int>{s,d,c};
+
+    int n;
+    cin >> n;
+    vector<int>arr(n);
+    for(int i = 0; i < n; ++ i) cin >> arr[i];
+    bool jumped = false;
+    int ypos = 1, xpos = 1;
+    if(arr[0] != 1) return no();
+
+    if(n == 1){
+        if(arr[0] == 1) col = 1;
+        else return no();
     }
 
-    priority_queue<tuple<int,int>>pq;
-    // (-prep_remaining, -deadline)
+    for(int i = 0; i + 1 < n; ++ i){
+        if(arr[i] == arr[i + 1]) return no();
 
-    int ans[n + 1];
-
-    for(int day = 1; day <= n; ++ day){
-
-        if(pq.empty()) ans[day] = 0;
-        else if(exam_day[day]){
-            if(get<1>(pq.top())*-1 <= day){
-                return pnl(-1);
+        if(abs(arr[i] - arr[i + 1]) == 1){
+            if(not jumped){
+                col = max({col, arr[i], arr[i + 1]});
+                // debug(col);
             }
-            ans[day] = m + 1;
+            else{
+                int num = min(arr[i + 1], arr[i])/col;
+                if(num*col < min(arr[i], arr[i + 1]) and max(arr[i], arr[i + 1]) <= (num +1) * col);
+                else return no();
+            }
+            ypos += arr[i + 1] - arr[i];
         }
         else{
-
+            if(not jumped){
+                if(arr[i + 1] < arr[i]) return no();
+                    // debug(arr[i + 1]);
+                    // debug(col);
+                    // debug(ypos);
+                    // debug(xpos);
+                if(col + ypos > arr[i + 1]){
+                    return no();
+                }
+                col =  arr[i + 1] - ypos;
+                jumped = true;
+                ++ xpos;
+            }
+            else{
+                if(xpos < 1e9 and col*(xpos - 1) + ypos + col == arr[i + 1]){
+                    ++ xpos;
+                }
+                else if(xpos > 1 and col*(xpos - 1) + ypos - col == arr[i + 1]){
+                    -- xpos;
+                }
+                else return no();
+            }
         }
-
     }
 
-
+    yes();
+    cout << (ll)1e9 << " " << col << endl;
+    
     return;
 }
 
@@ -78,7 +104,7 @@ void testcase(int test){ // testcasesid
 int32_t main(){
     fastio;
     int test=1,z=1;
-    cin>>test;
+    // cin>>test;
     while(z<=test){
         testcase(z); z++;
     }
@@ -88,6 +114,15 @@ int32_t main(){
 for std::lcm use -std=c++17 to compile locally
 
 g++ *.cpp > log.txt 2>&1
+
+14
+1 2 1 5 1 2 3 7 8 12 11 10 6 2
+
+4
+1 2 3 5
+
+8
+1 2 3 4 5 4 3 7
 
 topics:
 */

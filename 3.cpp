@@ -37,37 +37,69 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 // #define debug(x)
 
 
+int getans(string s){
+    int ans = 0;
+    for(int i= 0; i < (int)s.size() - 1; ++ i){
+        ans += (s[i] - '0') * 10 + (s[i + 1] - '0');
+    }
+    return ans;
+}
+
 void testcase(int test){ // testcasesid
 
 
-    int n;
-    cin >> n;
-    int N = 20;
-    vector<int>v(N, 0);
-    for(int i = 0; i < n; ++ i){
-        int val;
-        cin >> val;
-        for(int j = 0; (val>>j) > 0; ++ j){
-            if((val>>j)&1) ++ v[j];
-        }
+    int n, k;
+    cin >> n >> k;
+
+
+    string s;
+    cin >> s;
+    string s2 = s;
+    int l0 = -1, r1 = n -1;
+
+
+
+    int ans1 = 0, ans2 = 0;
+    int tk = k;
+
+    for(int i = 0; i < n; ++ i)    if(s[i] == '1') r1 = i;
+    while(tk > 0 and r1 < n - 1){
+        -- tk;
+        swap(s[r1], s[r1 + 1]);
+        ++ r1;
+    }
+    for(int i = n - 1; i >= 0; -- i)    if(s[i] == '1') l0 = i;
+    while(tk > 0 and l0 > 0){
+        -- tk;
+        swap(s[l0], s[l0 - 1]);
+        -- l0;
     }
 
-    ll ans = 0;
-    int times = *max_element(v.begin(), v.end());
 
-    while(times){
-        -- times;
-        ll res = 0;
-        for(int i = 0; i < N; ++ i){
-            if(v[i] > 0){
-                -- v[i];
-                res |= (1<<i);
-            }
-        }
-        ans += res* 1LL * res;
+    ans1 = getans(s);
+    s = s2;
+
+    tk = k;
+    l0= -1, r1 = n - 1;
+
+    for(int i = n - 1; i >= 0; -- i)    if(s[i] == '1') l0 = i;
+    while(tk > 0 and l0 > 0){
+        -- tk;
+        swap(s[l0], s[l0 - 1]);
+        -- l0;
+    }
+    
+    for(int i = 0; i < n; ++ i)     if(s[i] == '1') r1 = i;
+    while(tk > 0 and r1 < n - 1){
+        -- tk;
+        swap(s[r1], s[r1 + 1]);
+        ++ r1;
     }
 
-    cout << ans << endl;
+    ans2 = getans(s);
+
+    ans1 = min(ans1, ans2) ;
+    cout << ans1 <<endl;
 
     return;
 }
@@ -76,7 +108,7 @@ void testcase(int test){ // testcasesid
 int32_t main(){
     fastio;
     int test=1,z=1;
-    // cin>>test;
+    cin>>test;
     while(z<=test){
         testcase(z); z++;
     }
