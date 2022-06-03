@@ -35,68 +35,49 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
-
-int r = 1e9, col = -1;
+// https://codeforces.com/problemset/problem/895/B
 
 void testcase(int test){ // testcasesid
 
-    int n;
-    cin >> n;
-    vector<int>arr(n);
+    int n, x,k;
+    cin >> n >> x >> k;
+    int arr[n];
     for(int i = 0; i < n; ++ i) cin >> arr[i];
-    bool jumped = false;
-    int ypos = 1, xpos = 1;
-    if(arr[0] != 1) return no();
 
-    if(n == 1){
-        if(arr[0] == 1) col = 1;
-        else return no();
-    }
+    sort(arr, arr + n);
 
-    for(int i = 0; i + 1 < n; ++ i){
-        if(arr[i] == arr[i + 1]) return no();
-
-        if(abs(arr[i] - arr[i + 1]) == 1){
-            if(not jumped){
-                col = max({col, arr[i], arr[i + 1]});
-                // debug(col);
-            }
-            else{
-                int num = min(arr[i + 1], arr[i])/col;
-                if(num*col < min(arr[i], arr[i + 1]) and max(arr[i], arr[i + 1]) <= (num +1) * col);
-                else return no();
-            }
-            ypos += arr[i + 1] - arr[i];
-        }
-        else{
-            if(not jumped){
-                if(arr[i + 1] < arr[i]) return no();
-                    // debug(arr[i + 1]);
-                    // debug(col);
-                    // debug(ypos);
-                    // debug(xpos);
-                if(col + ypos > arr[i + 1]){
-                    return no();
-                }
-                col =  arr[i + 1] - ypos;
-                jumped = true;
-                ++ xpos;
-            }
-            else{
-                if(xpos < 1e9 and col*(xpos - 1) + ypos + col == arr[i + 1]){
-                    ++ xpos;
-                }
-                else if(xpos > 1 and col*(xpos - 1) + ypos - col == arr[i + 1]){
-                    -- xpos;
-                }
-                else return no();
-            }
+    vector<int>v;
+    for(int i = 0; i < n - 1; ++ i){
+        int val1 = ((arr[i] + x-1)/x);
+        if(val1*x <= arr[i + 1]){
+            int val2 = (arr[i + 1]/x);
+            // cout << val1<< " " << val2 << endl;
+            int freq = 1 + val2 - val1;
+            v.push_back(freq);
         }
     }
 
-    yes();
-    cout << (ll)1e9 << " " << col << endl;
-    
+    int p = 1, q = 1;
+    for(int i = 1; i < v.size(); ++ i){
+        v[i] += v[i - 1];
+    }
+    reverse(v.begin(), v.end());
+    v.push_back(0);
+    reverse(v.begin(), v.end());
+    int ans = 0;
+    // debug(v);
+    while(p < v.size() and q < v.size()){
+        if(v[q] - v[p - 1] == k) mp[p]++; //ans += (p == q? 1 : 2);
+        if(v[q] - v[p - 1] > k) ++ p;
+        else ++ q;
+        q = max(p, q);
+    }
+
+
+
+    cout << ans << endl;
+
+
     return;
 }
 
@@ -114,15 +95,6 @@ int32_t main(){
 for std::lcm use -std=c++17 to compile locally
 
 g++ *.cpp > log.txt 2>&1
-
-14
-1 2 1 5 1 2 3 7 8 12 11 10 6 2
-
-4
-1 2 3 5
-
-8
-1 2 3 4 5 4 3 7
 
 topics:
 */

@@ -36,58 +36,38 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
 
-vector<vector<int>>tree;
-vector<int>visited, a, b;
-int ans;
-
-void dfs(int node,int color){
-    visited[node] = 1;
-    if(color != b[node]){
-        color = 1 - color;
-        debug(node);
-        ++ ans;
-    }
-    else {
-        int num_childs = (int) tree[node].size() - 1;
-
-    }
-
-    for(auto child: tree[node]){
-        if(not visited[child]){
-            dfs(child, color);
-        }
-    }
-    return;
-}
-
 
 void testcase(int test){ // testcasesid
 
     int n;
     cin >> n;
+    stack<int>stk;
+    int freq[n + 1]={};
+    int without_removal = 0;
+    for(int i = 0; i < n; ++ i){
+        int val;
+        cin >> val;
+        while(stk.size() > 1  and stk.top() < val) stk.pop();
 
-    tree = vector<vector<int>>(n, vector<int>());
-    visited = vector<int>(n,0);
-    ans = 0;
-    a = vector<int>(n);
-    b = vector<int>(n);
-
-    for(int i = 0; i < n; ++ i) cin >> a[i];
-    for(int i = 0; i < n; ++ i) cin >> b[i];
-
-
-    for(int i = 0; i < n - 1; ++ i){
-        int t1, t2;
-        cin >> t1 >> t2;
-        -- t1, -- t2;
-        tree[t1].push_back(t2);
-        tree[t2].push_back(t1);
+        if(stk.empty()) without_removal++, -- freq[val];
+        if(stk.size() == 1 and stk.top() >  val) freq[stk.top()] ++;
+        stk.push(val);
     }
 
+    int idx = n;
+    for(int i = n; i > 0; -- i){
+        if(freq[idx] <= freq[i]){
+            idx = i;
+        }
+    }
 
+    for(int i = 1; i <= n; ++ i) cout << freq[i] << " "; cout <<endl;
 
-    dfs(0, a[0]);
-    cout << ans << endl;
+    if(freq[idx] == without_removal-1){
+        idx = 1;
+    }
+
+    cout << idx << endl;
 
     return;
 }
@@ -96,7 +76,6 @@ void testcase(int test){ // testcasesid
 int32_t main(){
     fastio;
     int test=1,z=1;
-    cin>>test;
     while(z<=test){
         testcase(z); z++;
     }
