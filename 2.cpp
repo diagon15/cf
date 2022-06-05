@@ -39,36 +39,11 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 void testcase(int test){ // testcasesid
 
-    int n;
-    cin >> n;
-    stack<int>stk;
-    int freq[n + 1]={};
-    int without_removal = 0;
-    for(int i = 0; i < n; ++ i){
-        int val;
-        cin >> val;
-        while(stk.size() > 1  and stk.top() < val) stk.pop();
-
-        if(stk.empty()) without_removal++, -- freq[val];
-        if(stk.size() == 1 and stk.top() >  val) freq[stk.top()] ++;
-        stk.push(val);
-    }
-
-    int idx = n;
-    for(int i = n; i > 0; -- i){
-        if(freq[idx] <= freq[i]){
-            idx = i;
-        }
-    }
-
-    for(int i = 1; i <= n; ++ i) cout << freq[i] << " "; cout <<endl;
-
-    if(freq[idx] == without_removal-1){
-        idx = 1;
-    }
-
-    cout << idx << endl;
-
+    // for(int i = 1; i <= 10; ++ i){
+    //     cout << i <<"\t" << i*i - (i-1) << endl;
+    // }
+    string str(3,'4');
+    pnl(str);
     return;
 }
 
@@ -76,6 +51,7 @@ void testcase(int test){ // testcasesid
 int32_t main(){
     fastio;
     int test=1,z=1;
+    cin>>test;
     while(z<=test){
         testcase(z); z++;
     }
@@ -85,6 +61,25 @@ int32_t main(){
 for std::lcm use -std=c++17 to compile locally
 
 g++ *.cpp > log.txt 2>&1
+
+[["..Q...","Q....Q","...Q..",".Q....","....Q.","......"],
+["...Q..","Q.....","....Q.",".Q....",".....Q","..Q..."],
+["...Q..","Q....Q","......",".Q....","....Q.","..Q..."],
+["......","Q....Q","...Q..",".Q....","....Q.","..Q..."],
+["..Q...","Q....Q","......","....Q.",".Q....","...Q.."],
+["...Q..","Q....Q","..Q...","....Q.",".Q....","......"],
+["......","Q....Q","..Q...","....Q.",".Q....","...Q.."],
+[".Q....","...Q..","Q....Q","..Q...","....Q.","......"],
+["....Q.","..Q...","Q....Q","...Q..",".Q....","......"],
+["......","..Q...","Q....Q","...Q..",".Q....","....Q."],
+["....Q.","..Q...","Q.....",".....Q","...Q..",".Q...."],
+["......","...Q..","Q....Q","..Q...","....Q.",".Q...."],
+[".Q....","....Q.","..Q...","Q....Q","...Q..","......"],
+[".Q....","...Q..",".....Q","Q.....","..Q...","....Q."],
+["....Q.",".Q....","...Q..","Q....Q","..Q...","......"],
+["......",".Q....","...Q..","Q....Q","..Q...","....Q."],
+["......","....Q.","..Q...","Q....Q","...Q..",".Q...."],
+["...Q..",".Q....","....Q.","..Q...","Q....Q","...
 
 topics:
 */

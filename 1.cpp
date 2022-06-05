@@ -35,48 +35,68 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
-// https://codeforces.com/problemset/problem/895/B
+
+// vector<ll>v;
+
+ll sqroot(ll x){
+    ll lo = 1, hi = x, mid;
+
+    while(lo <= hi){
+        mid = lo + (hi - lo) / 2;
+        ll sqmid = mid * mid;
+        if(sqmid == x) return mid;
+        else if(sqmid < x) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return lo;
+}
 
 void testcase(int test){ // testcasesid
 
-    int n, x,k;
-    cin >> n >> x >> k;
-    int arr[n];
-    for(int i = 0; i < n; ++ i) cin >> arr[i];
+    ll x;
+    cin >> x;
+    if(x == 1) return pnl(-1);
+    if(x == 0) return pnl("1 1");
+    ll n,m;
+    ll lo = sqroot(x), hi = 1e9, mid, res= -1, n1;
 
-    sort(arr, arr + n);
 
-    vector<int>v;
-    for(int i = 0; i < n - 1; ++ i){
-        int val1 = ((arr[i] + x-1)/x);
-        if(val1*x <= arr[i + 1]){
-            int val2 = (arr[i + 1]/x);
-            // cout << val1<< " " << val2 << endl;
-            int freq = 1 + val2 - val1;
-            v.push_back(freq);
+    ll lower= sqroot(x + 1) - 1, upper = sqroot(4*x/3) + 1;
+
+
+    for(ll n1 = lower; n1 <= upper; ++ n1){
+        ll lo = 2, hi = n1 - 1, m1;
+        ll testn = n1 - x;
+        ll rtn = sqroot(n1 - x);
+        if(rtn - testn) 
+        while(lo <= hi){
+            m1 = lo + (hi - lo) / 2;
+            ll num1s = n1*n1 - (n1/m1)*(n1/m1);
+
+            if(num1s <= x){
+                lo = m1 + 1;
+            }
+            else{
+                hi = m1 - 1;
+            }
         }
-    }
+        m1 = lo - 1;
 
-    int p = 1, q = 1;
-    for(int i = 1; i < v.size(); ++ i){
-        v[i] += v[i - 1];
-    }
-    reverse(v.begin(), v.end());
-    v.push_back(0);
-    reverse(v.begin(), v.end());
-    int ans = 0;
-    // debug(v);
-    while(p < v.size() and q < v.size()){
-        if(v[q] - v[p - 1] == k) mp[p]++; //ans += (p == q? 1 : 2);
-        if(v[q] - v[p - 1] > k) ++ p;
-        else ++ q;
-        q = max(p, q);
     }
 
 
 
-    cout << ans << endl;
 
+
+    if(res == -1){
+        cout << -1 << endl;
+        return ;
+    }
+
+    n = res;
+    m = n / sqroot(n*n - x);
+
+    cout << n << " " << m << endl;
 
     return;
 }
@@ -84,8 +104,9 @@ void testcase(int test){ // testcasesid
 
 int32_t main(){
     fastio;
+
     int test=1,z=1;
-    // cin>>test;
+    cin>>test;
     while(z<=test){
         testcase(z); z++;
     }
@@ -95,6 +116,7 @@ int32_t main(){
 for std::lcm use -std=c++17 to compile locally
 
 g++ *.cpp > log.txt 2>&1
-
+1
+21
 topics:
 */
