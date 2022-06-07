@@ -29,6 +29,7 @@ void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(
 void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
 
 template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(deque<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
 template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
 template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
 
@@ -38,54 +39,33 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 
 void testcase(int test){ // testcasesid
+/*
+    vector<vector<int>>v{{1,2,3}, {4,8,332,5},{4,5},{1,2,3},{4,8,332,5}};
+    v.erase(unique(v.begin(), v.end()), v.end());
+    debug(v);
+    // for(int i = 0; i < v.size(); ++ i){
+    //     debug(v[i]);
+    // }cout << "\n";
 
-    ll n, x, k;
-    cin >> n >> x >> k;
+    sort(v.begin(), v.end());
+    v.erase(unique(v.begin(), v.end()), v.end());
+    debug(v);
+    // for(int i = 0; i < v.size(); ++ i){
+    //     debug(v[i]);
+    // }cout << "\n";
+*/
 
-    ll arr[n];
-    for(int i = 0; i < n;++ i) cin>> arr[i];
-    sort(arr, arr + n);
-    map<ll, int> fst_idx;
-
-    for(int i = n - 1; i >= 0; -- i){
-        fst_idx[arr[i]] = i;
+    vector<deque<int>> vdq{{1, 2, 1}, {1, 1, 2}, {1, 2, 1}};
+    sort(vdq.begin(), vdq.end());
+    vdq.erase(unique(vdq.begin(), vdq.end()), vdq.end());
+    // debug(vdq);
+    for(int i = 0; i < vdq.size(); ++ i){
+        for(auto &e: vdq[i]) cout << e << " ";
+        cout << endl;
     }
-    ll ans = 0;
-    for(int i = 0; i < n; ++ i){
+    cout << endl;
 
-        int lo = fst_idx[arr[i]], hi = n - 1, mid, res1 = -1, res2 = -1;
-        // lower_bound
-        while(lo <= hi){
-            mid = lo + (hi - lo) / 2;
-            ll leftmost = ((arr[i] + x - 1) / x) * x;
-            ll rightmost = (arr[mid] / x) * x;
-
-            int cnt = (rightmost - leftmost)/x + 1;
-            if(cnt < k)    lo = mid + 1;
-            else if(cnt > k) hi = mid - 1;
-            else    res1 = mid, hi = mid - 1;
-        }
-
-        lo = fst_idx[arr[i]], hi = n - 1;
-        // upper_bound
-        while(lo <= hi){
-            mid = lo + (hi - lo) / 2;
-            ll leftmost = ((arr[i] + x - 1) / x) * x;
-            ll rightmost = (arr[mid] / x) * x;
-
-            int cnt = (rightmost - leftmost) / x + 1;
-            if(cnt < k) lo = mid + 1;
-            else if(cnt > k) hi = mid -1;
-            else res2 = mid, lo = mid + 1;
-        }
-
-        if(res1 != -1)
-        ans += res2 - res1 + 1;
-    }
-
-    cout << ans << endl;
-
-    return;
+return;
 }
 
 
