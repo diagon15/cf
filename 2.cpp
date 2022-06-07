@@ -1,85 +1,136 @@
-// problem link:
+// A C++ program to print topological
+// sorting of a graph using indegrees.
 #include <bits/stdc++.h>
 using namespace std;
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
 
-// template <class T>
-// using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+// Class to represent a graph
+class Graph
+{
+    // No. of vertices'
+    int V;
 
-using ll = long long;
-#define fastio    ios_base::sync_with_stdio(false);
-#define endl "\n";
+    // Pointer to an array containing
+    // adjacency listsList
+    list<int> *adj;
 
-void yes(){ cout<<"YES"<<"\n"; return ;}
-void no(){ cout<<"NO"<<"\n"; return ;}
-template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
-// std::apply([](auto&&... args) {((cout << args <<" "), ...); }, tp); // tuple print
+public:
+    // Constructor
+    Graph(int V);
 
-void _print(int x) { cout<<x;}
-void _print(long long x) { cout<<x;}
-void _print(char x) { cout<<x;}
-void _print(string x) { cout<<x;}
-void _print(bool x) { cout<<x;}
-void _print(size_t x) { cout<<x;}
+    // Function to add an edge to graph
+    void addEdge(int u, int v);
 
-void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
-void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
-void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+    // prints a Topological Sort of
+    // the complete graph
+    void topologicalSort();
+};
 
-template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
-template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
-template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
-
-
-#define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
-// #define debug(x)
-
-
-void testcase(int test){ // testcasesid
-
-    // for(int i = 1; i <= 10; ++ i){
-    //     cout << i <<"\t" << i*i - (i-1) << endl;
-    // }
-    string str(3,'4');
-    pnl(str);
-    return;
+Graph::Graph(int V)
+{
+    this->V = V;
+    adj = new list<int>[V];
 }
 
+void Graph::addEdge(int u, int v)
+{
+    adj[u].push_back(v);
+}
 
-int32_t main(){
-    fastio;
-    int test=1,z=1;
-    cin>>test;
-    while(z<=test){
-        testcase(z); z++;
+// The function to do
+// Topological Sort.
+void Graph::topologicalSort()
+{
+    // Create a vector to store
+    // indegrees of all
+    // vertices. Initialize all
+    // indegrees as 0.
+    vector<int> in_degree(V, 0);
+
+    // Traverse adjacency lists
+    // to fill indegrees of
+    // vertices. This step
+    // takes O(V+E) time
+    for (int u = 0; u < V; u++)
+    {
+        list<int>::iterator itr;
+        for (itr = adj[u].begin();
+             itr != adj[u].end(); itr++)
+            in_degree[*itr]++;
     }
+
+    // Create an queue and enqueue
+    // all vertices with indegree 0
+    queue<int> q;
+    for (int i = 0; i < V; i++)
+        if (in_degree[i] == 0)
+            q.push(i);
+
+    // Initialize count of visited vertices
+    int cnt = 0;
+
+    // Create a vector to store
+    // result (A topological
+    // ordering of the vertices)
+    vector<int> top_order;
+
+    // One by one dequeue vertices
+    // from queue and enqueue
+    // adjacents if indegree of
+    // adjacent becomes 0
+    while (!q.empty())
+    {
+        // Extract front of queue
+        // (or perform dequeue)
+        // and add it to topological order
+        int u = q.front();
+        q.pop();
+        top_order.push_back(u);
+
+        // Iterate through all its
+        // neighbouring nodes
+        // of dequeued node u and
+        // decrease their in-degree
+        // by 1
+        list<int>::iterator itr;
+        for (itr = adj[u].begin();
+             itr != adj[u].end(); itr++)
+
+            // If in-degree becomes zero,
+            // add it to queue
+            if (--in_degree[*itr] == 0)
+                q.push(*itr);
+
+        cnt++;
+    }
+
+    // Check if there was a cycle
+    if (cnt != V)
+    {
+        cout << "There exists a cycle in the graph\n";
+        return;
+    }
+
+    // Print topological order
+    for (int i = 0; i < top_order.size(); i++)
+        cout << top_order[i] << " ";
+    cout << endl;
+}
+
+// Driver program to test above functions
+int main()
+{
+    // Create a graph given in the
+    // above diagram
+    Graph g(6);
+    g.addEdge(5, 2);
+    g.addEdge(5, 0);
+    g.addEdge(4, 0);
+    g.addEdge(4, 1);
+    g.addEdge(2, 3);
+    g.addEdge(3, 1);
+
+    cout << "Following is a Topological Sort of\n";
+    g.topologicalSort();
+
     return 0;
 }
-/*
-for std::lcm use -std=c++17 to compile locally
-
-g++ *.cpp > log.txt 2>&1
-
-[["..Q...","Q....Q","...Q..",".Q....","....Q.","......"],
-["...Q..","Q.....","....Q.",".Q....",".....Q","..Q..."],
-["...Q..","Q....Q","......",".Q....","....Q.","..Q..."],
-["......","Q....Q","...Q..",".Q....","....Q.","..Q..."],
-["..Q...","Q....Q","......","....Q.",".Q....","...Q.."],
-["...Q..","Q....Q","..Q...","....Q.",".Q....","......"],
-["......","Q....Q","..Q...","....Q.",".Q....","...Q.."],
-[".Q....","...Q..","Q....Q","..Q...","....Q.","......"],
-["....Q.","..Q...","Q....Q","...Q..",".Q....","......"],
-["......","..Q...","Q....Q","...Q..",".Q....","....Q."],
-["....Q.","..Q...","Q.....",".....Q","...Q..",".Q...."],
-["......","...Q..","Q....Q","..Q...","....Q.",".Q...."],
-[".Q....","....Q.","..Q...","Q....Q","...Q..","......"],
-[".Q....","...Q..",".....Q","Q.....","..Q...","....Q."],
-["....Q.",".Q....","...Q..","Q....Q","..Q...","......"],
-["......",".Q....","...Q..","Q....Q","..Q...","....Q."],
-["......","....Q.","..Q...","Q....Q","...Q..",".Q...."],
-["...Q..",".Q....","....Q.","..Q...","Q....Q","...
-
-topics:
-*/

@@ -1,4 +1,4 @@
-// problem link:
+// problem link: https://codeforces.com/problemset/problem/917/B?f0a28=1
 #include <bits/stdc++.h>
 using namespace std;
 // #include <ext/pb_ds/assoc_container.hpp>
@@ -35,68 +35,96 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
+int n, m;
+vector<vector<pair<int,char>>>adjlist;
 
-// vector<ll>v;
+struct Edge {
+    int src;
+    int dst;
+    char ch;
+    Edge(int s, int d, char c):src(s), dst(d), ch(c){}
+};
+// src1 win -> return B, otherwise return A
+char solve(int src1, int src2){
+    // deque<edge> dq1, dq2;
+    char reset = 'a' - 1;
+    // debug(reset);
+    queue<Edge> q1, q2;
+    char max1= reset, max2 = reset;
 
-ll sqroot(ll x){
-    ll lo = 1, hi = x, mid;
-
-    while(lo <= hi){
-        mid = lo + (hi - lo) / 2;
-        ll sqmid = mid * mid;
-        if(sqmid == x) return mid;
-        else if(sqmid < x) lo = mid + 1;
-        else hi = mid - 1;
+    for(auto &u: adjlist[src1]){
+        q1.push(Edge(src1, u.first, u.second));
+        max1 = max(max1, u.second);
     }
-    return lo;
+
+    for(auto &u: adjlist[src2]){
+        q2.push(Edge(src2, u.first, u.second));
+        max2 = max(max2, u.second);
+    }
+
+    if(max1 == reset) return 'B';
+
+    while(max2 >= max1 and (not q1.empty()) and (not q2.empty())){
+        int q1sz = q1.size();
+        int q2sz = q2.size();
+        max1 = reset;
+        max2 = reset;
+        while(q1sz){
+            -- q1sz;
+            Edge tp = q1.front();
+            q1.pop();
+            for(auto &u: adjlist[tp.dst]){
+                q1.push(Edge(tp.dst, u.first, u.second));
+                max1 = max(max1, u.second);
+            }
+        }
+
+        while(q2sz){
+            -- q2sz;
+            Edge tp = q2.front();
+            q2.pop();
+            for(auto &u: adjlist[tp.dst]){
+                q2.push(Edge(tp.dst, u.first, u.second));
+                max2 = max(max2, u.second);
+            }
+        }
+
+        if(max1 == reset) return 'B';
+    }
+
+    // cout << src1 << " " << src2 << endl;
+    if(max2 < max1) return 'A';
+    else if(q1.empty()) return 'B';
+    else if(q2.empty()) return 'A';
+    return 'C'; // never executed
 }
 
 void testcase(int test){ // testcasesid
 
-    ll x;
-    cin >> x;
-    if(x == 1) return pnl(-1);
-    if(x == 0) return pnl("1 1");
-    ll n,m;
-    ll lo = sqroot(x), hi = 1e9, mid, res= -1, n1;
+    cin >> n >> m;
+    adjlist = vector<vector<pair<int, char>>> (n);
+    for(int i = 0; i < m; ++ i){
+        int src, dst;
+        char ch;
+        cin >> src >> dst >> ch;
+        -- src, -- dst;
+        adjlist[src].push_back({dst, ch});
+    }
 
-
-    ll lower= sqroot(x + 1) - 1, upper = sqroot(4*x/3) + 1;
-
-
-    for(ll n1 = lower; n1 <= upper; ++ n1){
-        ll lo = 2, hi = n1 - 1, m1;
-        ll testn = n1 - x;
-        ll rtn = sqroot(n1 - x);
-        if(rtn - testn) 
-        while(lo <= hi){
-            m1 = lo + (hi - lo) / 2;
-            ll num1s = n1*n1 - (n1/m1)*(n1/m1);
-
-            if(num1s <= x){
-                lo = m1 + 1;
-            }
-            else{
-                hi = m1 - 1;
-            }
+    char ans[n][n]{'$'};
+    for(int max = 0; max < n; ++ max){
+        for(int lucas = 0; lucas < n; ++ lucas){
+            ans[max][lucas] = solve(max, lucas);
         }
-        m1 = lo - 1;
-
     }
 
 
-
-
-
-    if(res == -1){
-        cout << -1 << endl;
-        return ;
+    for(int i = 0; i < n; ++ i){
+        for(int j = 0; j < n; ++ j){
+            cout << ans[i][j];
+        }
+        cout << endl;
     }
-
-    n = res;
-    m = n / sqroot(n*n - x);
-
-    cout << n << " " << m << endl;
 
     return;
 }
@@ -104,9 +132,8 @@ void testcase(int test){ // testcasesid
 
 int32_t main(){
     fastio;
-
     int test=1,z=1;
-    cin>>test;
+    // cin>>test;
     while(z<=test){
         testcase(z); z++;
     }
@@ -116,7 +143,6 @@ int32_t main(){
 for std::lcm use -std=c++17 to compile locally
 
 g++ *.cpp > log.txt 2>&1
-1
-21
+
 topics:
 */
