@@ -1,4 +1,4 @@
-// problem link: https://codeforces.com/problemset/problem/917/B?f0a28=1
+// problem link:https://codeforces.com/problemset/problem/917/B?csrf_token=47ad6ba10e886a16b4fed64d823e7458&f0a28=1
 #include <bits/stdc++.h>
 using namespace std;
 // #include <ext/pb_ds/assoc_container.hpp>
@@ -35,95 +35,59 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
-int n, m;
-vector<vector<pair<int,char>>>adjlist;
 
-struct Edge {
-    int src;
-    int dst;
-    char ch;
-    Edge(int s, int d, char c):src(s), dst(d), ch(c){}
-};
-// src1 win -> return B, otherwise return A
-char solve(int src1, int src2){
-    // deque<edge> dq1, dq2;
-    char reset = 'a' - 1;
-    // debug(reset);
-    queue<Edge> q1, q2;
-    char max1= reset, max2 = reset;
+const int N = 101;
+int dp[N][N][28][2];
+vector<vector<pair<int,int>>>adj;
 
-    for(auto &u: adjlist[src1]){
-        q1.push(Edge(src1, u.first, u.second));
-        max1 = max(max1, u.second);
-    }
+int dfs(int u, int v, int k, int op){
+    if(dp[u][v][k][op] != -1) return dp[u][v][k][op];
 
-    for(auto &u: adjlist[src2]){
-        q2.push(Edge(src2, u.first, u.second));
-        max2 = max(max2, u.second);
-    }
-
-    if(max1 == reset) return 'B';
-
-    while(max2 >= max1 and (not q1.empty()) and (not q2.empty())){
-        int q1sz = q1.size();
-        int q2sz = q2.size();
-        max1 = reset;
-        max2 = reset;
-        while(q1sz){
-            -- q1sz;
-            Edge tp = q1.front();
-            q1.pop();
-            for(auto &u: adjlist[tp.dst]){
-                q1.push(Edge(tp.dst, u.first, u.second));
-                max1 = max(max1, u.second);
+    if(not op){
+        int win = 0;
+        for(auto &x: adj[u]){
+            if(x.second >= k){
+                win |= dfs(x.first, v, x.second , op^1);
+                if(win == 1) break;
             }
         }
-
-        while(q2sz){
-            -- q2sz;
-            Edge tp = q2.front();
-            q2.pop();
-            for(auto &u: adjlist[tp.dst]){
-                q2.push(Edge(tp.dst, u.first, u.second));
-                max2 = max(max2, u.second);
+        return dp[u][v][k][op] = win;
+    }
+    else{
+        int win = 1;
+        for(auto &x: adj[v]){
+            if(x.second >= k){
+                win &= dfs(u, x.first, x.second , op^1);
+                if(win == 0) break;
             }
         }
-
-        if(max1 == reset) return 'B';
+        return dp[u][v][k][op] = win;
     }
-
-    // cout << src1 << " " << src2 << endl;
-    if(max2 < max1) return 'A';
-    else if(q1.empty()) return 'B';
-    else if(q2.empty()) return 'A';
-    return 'C'; // never executed
 }
+
+
 
 void testcase(int test){ // testcasesid
 
+    int n, m;
     cin >> n >> m;
-    adjlist = vector<vector<pair<int, char>>> (n);
+    adj = vector<vector<pair<int,int>>>(n);
+    fill_n(&dp[0][0][0][0], N*N*28*2, -1);
     for(int i = 0; i < m; ++ i){
-        int src, dst;
+        int t1, t2;
         char ch;
-        cin >> src >> dst >> ch;
-        -- src, -- dst;
-        adjlist[src].push_back({dst, ch});
+        cin >> t1 >> t2 >> ch;
+        -- t1, -- t2;
+        int chint = ch - 'a';
+        adj[t1].push_back({t2,chint});
     }
 
-    char ans[n][n]{'$'};
     for(int max = 0; max < n; ++ max){
-        for(int lucas = 0; lucas < n; ++ lucas){
-            ans[max][lucas] = solve(max, lucas);
+        for(int alice = 0; alice < n; ++ alice){
+            char res = (dfs(max, alice, 0, 0) ? 'A' : 'B');
+            putchar(res);
         }
-    }
-
-
-    for(int i = 0; i < n; ++ i){
-        for(int j = 0; j < n; ++ j){
-            cout << ans[i][j];
-        }
-        cout << endl;
+        puts("");
     }
 
     return;

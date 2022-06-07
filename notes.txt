@@ -1,1 +1,14 @@
-git show e5e9e67 : 1.cpp > 1.cpp
+
+User@SIDDHARTH MINGW64 /d/vs-code/Cpp/cf (main)
+$ git log -1
+commit bf6fb6ba2e63655c830c15016e2231bbae521206 (HEAD -> main, origin/main)
+Author: diagon15 <siddharthmagadum15@gmail.com>
+Date:   Tue Jun 7 15:19:53 2022 +0530
+
+    dp on graph unsolved
+
+User@SIDDHARTH MINGW64 /d/vs-code/Cpp/cf (main)
+$ git checkout bf6fb -- 1.cpp
+
+
+
