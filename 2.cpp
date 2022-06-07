@@ -1,136 +1,107 @@
-// A C++ program to print topological
-// sorting of a graph using indegrees.
+// problem link:
 #include <bits/stdc++.h>
 using namespace std;
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
 
-// Class to represent a graph
-class Graph
-{
-    // No. of vertices'
-    int V;
+// template <class T>
+// using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-    // Pointer to an array containing
-    // adjacency listsList
-    list<int> *adj;
+using ll = long long;
+#define fastio    ios_base::sync_with_stdio(false);
+#define endl "\n";
 
-public:
-    // Constructor
-    Graph(int V);
+void yes(){ cout<<"YES"<<"\n"; return ;}
+void no(){ cout<<"NO"<<"\n"; return ;}
+template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
+// std::apply([](auto&&... args) {((cout << args <<" "), ...); }, tp); // tuple print
 
-    // Function to add an edge to graph
-    void addEdge(int u, int v);
+void _print(int x) { cout<<x;}
+void _print(long long x) { cout<<x;}
+void _print(char x) { cout<<x;}
+void _print(string x) { cout<<x;}
+void _print(bool x) { cout<<x;}
+void _print(size_t x) { cout<<x;}
 
-    // prints a Topological Sort of
-    // the complete graph
-    void topologicalSort();
-};
+void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
 
-Graph::Graph(int V)
-{
-    this->V = V;
-    adj = new list<int>[V];
-}
+template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
 
-void Graph::addEdge(int u, int v)
-{
-    adj[u].push_back(v);
-}
 
-// The function to do
-// Topological Sort.
-void Graph::topologicalSort()
-{
-    // Create a vector to store
-    // indegrees of all
-    // vertices. Initialize all
-    // indegrees as 0.
-    vector<int> in_degree(V, 0);
+#define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
+// #define debug(x)
 
-    // Traverse adjacency lists
-    // to fill indegrees of
-    // vertices. This step
-    // takes O(V+E) time
-    for (int u = 0; u < V; u++)
-    {
-        list<int>::iterator itr;
-        for (itr = adj[u].begin();
-             itr != adj[u].end(); itr++)
-            in_degree[*itr]++;
+
+void testcase(int test){ // testcasesid
+
+    ll n, x, k;
+    cin >> n >> x >> k;
+
+    ll arr[n];
+    for(int i = 0; i < n;++ i) cin>> arr[i];
+    sort(arr, arr + n);
+    map<ll, int> fst_idx;
+
+    for(int i = n - 1; i >= 0; -- i){
+        fst_idx[arr[i]] = i;
+    }
+    ll ans = 0;
+    for(int i = 0; i < n; ++ i){
+
+        int lo = fst_idx[arr[i]], hi = n - 1, mid, res1 = -1, res2 = -1;
+        // lower_bound
+        while(lo <= hi){
+            mid = lo + (hi - lo) / 2;
+            ll leftmost = ((arr[i] + x - 1) / x) * x;
+            ll rightmost = (arr[mid] / x) * x;
+
+            int cnt = (rightmost - leftmost)/x + 1;
+            if(cnt < k)    lo = mid + 1;
+            else if(cnt > k) hi = mid - 1;
+            else    res1 = mid, hi = mid - 1;
+        }
+
+        lo = fst_idx[arr[i]], hi = n - 1;
+        // upper_bound
+        while(lo <= hi){
+            mid = lo + (hi - lo) / 2;
+            ll leftmost = ((arr[i] + x - 1) / x) * x;
+            ll rightmost = (arr[mid] / x) * x;
+
+            int cnt = (rightmost - leftmost) / x + 1;
+            if(cnt < k) lo = mid + 1;
+            else if(cnt > k) hi = mid -1;
+            else res2 = mid, lo = mid + 1;
+        }
+
+        if(res1 != -1)
+        ans += res2 - res1 + 1;
     }
 
-    // Create an queue and enqueue
-    // all vertices with indegree 0
-    queue<int> q;
-    for (int i = 0; i < V; i++)
-        if (in_degree[i] == 0)
-            q.push(i);
+    cout << ans << endl;
 
-    // Initialize count of visited vertices
-    int cnt = 0;
-
-    // Create a vector to store
-    // result (A topological
-    // ordering of the vertices)
-    vector<int> top_order;
-
-    // One by one dequeue vertices
-    // from queue and enqueue
-    // adjacents if indegree of
-    // adjacent becomes 0
-    while (!q.empty())
-    {
-        // Extract front of queue
-        // (or perform dequeue)
-        // and add it to topological order
-        int u = q.front();
-        q.pop();
-        top_order.push_back(u);
-
-        // Iterate through all its
-        // neighbouring nodes
-        // of dequeued node u and
-        // decrease their in-degree
-        // by 1
-        list<int>::iterator itr;
-        for (itr = adj[u].begin();
-             itr != adj[u].end(); itr++)
-
-            // If in-degree becomes zero,
-            // add it to queue
-            if (--in_degree[*itr] == 0)
-                q.push(*itr);
-
-        cnt++;
-    }
-
-    // Check if there was a cycle
-    if (cnt != V)
-    {
-        cout << "There exists a cycle in the graph\n";
-        return;
-    }
-
-    // Print topological order
-    for (int i = 0; i < top_order.size(); i++)
-        cout << top_order[i] << " ";
-    cout << endl;
+    return;
 }
 
-// Driver program to test above functions
-int main()
-{
-    // Create a graph given in the
-    // above diagram
-    Graph g(6);
-    g.addEdge(5, 2);
-    g.addEdge(5, 0);
-    g.addEdge(4, 0);
-    g.addEdge(4, 1);
-    g.addEdge(2, 3);
-    g.addEdge(3, 1);
 
-    cout << "Following is a Topological Sort of\n";
-    g.topologicalSort();
-
+int32_t main(){
+    fastio;
+    int test=1,z=1;
+    // cin>>test;
+    while(z<=test){
+        testcase(z); z++;
+    }
     return 0;
 }
+/*
+for std::lcm use -std=c++17 to compile locally
+
+g++ *.cpp > log.txt 2>&1
+
+topics:
+*/

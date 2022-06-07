@@ -1,4 +1,4 @@
-// problem link:https://codeforces.com/problemset/problem/917/B?csrf_token=47ad6ba10e886a16b4fed64d823e7458&f0a28=1
+// problem link:
 #include <bits/stdc++.h>
 using namespace std;
 // #include <ext/pb_ds/assoc_container.hpp>
@@ -35,60 +35,48 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
-
-const int N = 101;
-int dp[N][N][28][2];
-vector<vector<pair<int,int>>>adj;
-
-int dfs(int u, int v, int k, int op){
-    if(dp[u][v][k][op] != -1) return dp[u][v][k][op];
-
-    if(not op){
-        int win = 0;
-        for(auto &x: adj[u]){
-            if(x.second >= k){
-                win |= dfs(x.first, v, x.second , op^1);
-                if(win == 1) break;
-            }
-        }
-        return dp[u][v][k][op] = win;
-    }
-    else{
-        int win = 1;
-        for(auto &x: adj[v]){
-            if(x.second >= k){
-                win &= dfs(u, x.first, x.second , op^1);
-                if(win == 0) break;
-            }
-        }
-        return dp[u][v][k][op] = win;
-    }
-}
-
+string f0 = "What are you doing at the end of the world? Are you busy? Will you save us?";
+string str1 = "What are you doing while sending ";
+string str2 = "? Are you busy? Will you send ";
+string str3 = "?";
 
 
 void testcase(int test){ // testcasesid
+    cout << (str1 + str2 + str3).length() + 4 << endl;
+    pnl(str1.length());
+    pnl(str2.length());
+    pnl(f0.length());
+    int q;
+    vector<pair<ll,ll>>question;
+    cin >> q;
+    ll maxn = 0;
+    while(q){
+        -- q;
+        ll n, k;
+        cin >> n >> k;
+        question.push_back({n,k});
+        maxn = max(maxn, n);
+    }
+    string F[maxn + 1];
+    fill_n(&F[0], maxn + 1, "-");
+    F[0] = f0;
+    for(int i = 1; i <= maxn; ++ i){
+        F[i] = str1 + "\"" + F[i - 1] + "\"" + str2 + "\"" + F[i - 1] + "\"" + str3;
+    }
+    // debug(f0.length());
+    debug(F[1].length());
+    debug(F[2].length());
+    // cout << F[1].substr(193) << endl;
+    // debug(F[2]);
+    // cout << F[1] << endl;
 
-    int n, m;
-    cin >> n >> m;
-    adj = vector<vector<pair<int,int>>>(n);
-    fill_n(&dp[0][0][0][0], N*N*28*2, -1);
-    for(int i = 0; i < m; ++ i){
-        int t1, t2;
-        char ch;
-        cin >> t1 >> t2 >> ch;
-        -- t1, -- t2;
-        int chint = ch - 'a';
-        adj[t1].push_back({t2,chint});
+    for(auto &nk: question){
+        ll n = nk.first, k = nk.second;
+        if(F[n].size() < k) putchar('.');
+        else putchar(F[n][k-1]);
     }
 
-    for(int max = 0; max < n; ++ max){
-        for(int alice = 0; alice < n; ++ alice){
-            char res = (dfs(max, alice, 0, 0) ? 'A' : 'B');
-            putchar(res);
-        }
-        puts("");
-    }
+
 
     return;
 }
