@@ -1,4 +1,4 @@
-// problem link:https://codeforces.com/contest/1690/problem/F
+// problem link: https://codeforces.com/problemset/problem/896/A
 #include <bits/stdc++.h>
 using namespace std;
 // #include <ext/pb_ds/assoc_container.hpp>
@@ -9,7 +9,6 @@ using namespace std;
 // using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 using ll = long long;
-using ull = unsigned long long;
 #define fastio    ios_base::sync_with_stdio(false);
 #define endl "\n";
 
@@ -36,75 +35,59 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
+string f0 = "What are you doing at the end of the world? Are you busy? Will you save us?";
+string fa = "What are you doing while sending \"";
+string fb = "\"? Are you busy? Will you send \"";
+string fc = "\"?";
 
+
+char dfs(ll n, ll k, vector<ll> &dp){
+    if(n == 0)  return f0[k];
+    if(k < fa.length()) return fa[k];
+    k -= fa.length();
+
+    if(k < dp[n - 1]) return dfs(n - 1, k, dp);
+    k -= dp[n - 1];
+
+    if(k < fb.length()) return fb[k];
+    k -= fb.length();
+
+    if(k < dp[n - 1]) return dfs(n - 1, k , dp);
+    k -= dp[n - 1];
+
+    return fc[k];
+}
 
 void testcase(int test){ // testcasesid
 
-    int n;
-    cin >> n;
-    string s;
-    cin >> s;
-    int arr[n];
-    for(int i = 0; i < n; ++ i) cin >> arr[i], -- arr[i];
+    int q;
+    vector<pair<ll,ll>>question;
+    cin >> q;
+    ll maxn = 0;
+    while(q){
+        -- q;
+        ll n, k;
+        cin >> n >> k;
+        question.push_back({n,k});
+        maxn = max(maxn, n);
+    }
 
-    bool visited[n]{};
+    vector<ll> dp(maxn + 1);
+    dp[0] = f0.length();
+    for(int i = 1; i <= maxn; ++ i){
+        dp[i] = fa.length() + dp[i - 1] + fb.length() + dp[i - 1] + fc.length();
+        dp[i] = min(dp[i], (ll)1e18+1);
+    }
 
-    vector<deque<int>>data;
-
-    for(int i = 0; i < n; ++ i){
-        if(not visited[i]){
-            int idx = i;
-            deque<char>dq;
-            // vector<char>v;
-            set<char>st;
-            while(not visited[idx]){
-                visited[idx] = true;
-                dq.push_back(s[idx]);
-                if(st.size() <= 1) st.insert(s[idx]);
-                idx = arr[idx];
-            }
-
-            if(st.size() == 2){
-
-                while(dq.front() == dq.back()){
-                    dq.push_front(dq.back());
-                    dq.pop_back();
-                }
-                // vector<int>u;
-                deque<int>uq;
-                int cnt = 1;
-                for(int i = 1; i < dq.size(); ++ i){
-                    if(dq[i] == dq[i - 1]){
-                        ++ cnt;
-                    }
-                    else{
-                        uq.push_back(cnt);
-                        cnt = 1;
-                    }
-                }
-
-                uq.push_back(cnt);
-                int mini = *min_element(uq.begin(), uq.end());
-                int mini_cnt = 0;
-                for(auto &e: uq) mini_cnt += (mini == e ? 1 : 0);
-                if(mini_cnt != uq.size()){
-                    while(mini != uq.front()) uq.push_back(uq.front()), uq.pop_front();
-                    while(mini == uq.back()) uq.push_front(uq.back()), uq.pop_back();
-                }
-                data.push_back(uq);
-            }
+    for(auto nk: question){
+        ll n = nk.first, k = nk.second;
+        if(dp[n] < k) putchar('.');
+        else{
+            -- k;
+            cout << dfs(n, k, dp);
         }
     }
 
-    sort(data.begin(), data.end());
-    data.erase(unique(data.begin(), data.end()), data.end());
-    ull ans = 1;
-    for(auto &vect: data){
-        ull num = accumulate(vect.begin(), vect.end(), 0);
-        ans = ans*num; ///__gcd(ans, num);
-    }
-
-    cout << ans << endl;
 
     return;
 }
@@ -113,7 +96,7 @@ void testcase(int test){ // testcasesid
 int32_t main(){
     fastio;
     int test=1,z=1;
-    cin>>test;
+    // cin>>test;
     while(z<=test){
         testcase(z); z++;
     }
