@@ -1,141 +1,96 @@
-#include<bits/stdc++.h>
+// problem link:
+#include <bits/stdc++.h>
 using namespace std;
-#define vec vector<int>
-#define vecp vector<pair<int,int>>
-#define vecc vector<vector<int>>
-#define pb push_back
-#define fr first
-#define sc second
-#define fr1(i,a,b) for(int i = a; i < b; i++)
-#define fr2(i,a,b) for(int i = a; i >= b; i--)
-#define fr3(i,a,b) for(int i = a; i <= b; i++)
-#define pr pair<int,int>
-#define mod 1000000007
-#define mod1 998244353
-#define all(v) (v).begin(),(v).end()
-#define sz(x) (int)(x).size()
-#define ppb pop_back
-#define ins insert
-//#define int long long
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
 
-void write(vec &v){
-    for(auto i:v)
-        cout << i << " ";
-    cout << "\n";
-}
+// template <class T>
+// using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-void read(vec &v){
-    for(auto &i:v)
-        cin >> i;
-}
+using ll = long long;
+#define fastio    ios_base::sync_with_stdio(false);
+#define endl "\n";
 
-const int INF = 1e9;
-const int64_t INFF = 1e18;
-const int N = 1e6+69;
-class dsu{
-public:
-    vec par;
-    vec siz;
-    vecp red;
-    vecp blue;
-    dsu(int n){
-        par.resize(n);
-        siz.resize(n);
-        red.resize(n);
-        blue.resize(n);
-        fr1(i,0,n){
-            par[i] = i;
-            siz[i] = 1;
-            red[i].fr = 0;
-            red[i].sc = -1;
-            blue[i].fr = 0;
-            blue[i].sc = -1;
-        }
-    }
-    int findParent(int v){
-        if(v == par[v])
-            return v;
-        return par[v] = findParent(par[v]);
-    }
+void yes(){ cout<<"YES"<<"\n"; return ;}
+void no(){ cout<<"NO"<<"\n"; return ;}
+template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
+// std::apply([](auto&&... args) {((cout << args <<" "), ...); }, tp); // tuple print
 
-    
-    void dounion(int u,int v){
-        u = findParent(u);
-        v = findParent(v);
-        if(siz[v] > siz[u]){
-            swap(u,v);
-        }
-        siz[u] += siz[v];
-        blue[u].fr = min(blue[u].fr,blue[v].fr);
-        red[u].fr = min(red[u].fr,red[v].fr);
-        blue[u].sc = max(blue[u].sc,blue[v].sc);
-        red[u].sc = max(red[u].sc,red[v].sc);
-        par[v] = u;
-    }
-};
+void _print(int x) { cout<<x;}
+void _print(long long x) { cout<<x;}
+void _print(char x) { cout<<x;}
+void _print(string x) { cout<<x;}
+void _print(bool x) { cout<<x;}
+void _print(size_t x) { cout<<x;}
 
-void solve(){
+void _print(pair<int, int> x) { cout << x.first << "," << x.second; }
+// void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+
+template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+
+
+#define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
+// #define debug(x)
+
+int I(char ch) { return (int)(ch - 'a'); }
+
+void testcase(int test){ // testcasesid
+    const int mod = 1e9 + 7;
     int n;
-    cin >> n;
-    vector<array<int,3>> sorted;
-    dsu d(n);
-    fr1(i,0,n){
-        int c,l,r;
-        cin >> c >> l >> r;
-        sorted.pb({l,i + 1,c});
-        sorted.pb({r+1,-(i + 1),c});
-        if(c == 0){
-            d.red[i].fr = l;
-            d.red[i].sc = r;
-        } else {
-            d.blue[i].fr = l;
-            d.blue[i].sc = r;
+    cin >>n;
+    string s;
+    cin >> s;
+    int limit[26];
+    for(int i = 0; i < 26;  ++ i) cin >> limit[i];
+
+    int dp[n + 1];
+    int ans1 = 0, ans2 = 0, ans3 = 1;
+    dp[0] = 1;
+    for(int i = 1; i <= n; ++ i){
+
+        int l = i;
+        int lc = limit[I(s[i - 1])];
+        int len;
+        while(l >= 1 and (len =  i - l + 1) <= lc){
+            dp[i] += dp[l - 1];
+            dp[i]%= mod;
+            ans2 = max(ans2, len);
+            -- l;
+            lc = min(lc, limit[I(s[l - 1])]);
         }
     }
-    sort(all(sorted));
-    set<int> s[2];
-    int ans = n;
-    for(auto [l,ind,c]:sorted){
-        if(ind > 0){
-            if(sz(s[1-c])){
-                for(auto j:s[1-c]){
-                    d.dounion(ind-1,j);
-                    ans--;
-                }
-                s[1-c].clear();
-                s[1-c].insert(d.findParent(ind-1));
-                s[c].insert(d.findParent(ind-1));
-            } else {
-                s[c].insert(d.findParent(ind-1));
-            }
-        } else {
-            ind = abs(ind);
-            int par = d.findParent(ind-1);
-            if(c == 0){
-                if(d.red[par].sc == l-1){
-                    if(s[c].count(par)){
-                        s[c].erase(par);
-                    }
-                }
-            } else {
-                if(d.blue[par].sc == l-1){
-                    if(s[c].count(par)){
-                        s[c].erase(par);
-                    }
-                }
-            }
-        }
+
+    int lc = n , len = 1;
+    for(int i = 0; i < n; ++ i){
+        lc = min(lc, limit[I(s[i])]);
+        if(len > lc) ++ ans3, len = 1;
     }
-    cout << ans << "\n";
+
+    cout << dp[n] << "\n" << ans2 << "\n" << ans3 << endl;
+
+
+    return;
 }
-signed main(){
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    int t=1;
-    cin>>t;
-    fr3(i,1,t){
-        // cout<<"Case #"<<i<<": ";
-        solve();
+
+
+int32_t main(){
+    fastio;
+    int test=1,z=1;
+    // cin>>test;
+    while(z<=test){
+        testcase(z); z++;
     }
     return 0;
 }
+/*
+for std::lcm use -std=c++17 to compile locally
+
+g++ *.cpp > log.txt 2>&1
+
+topics:
+*/

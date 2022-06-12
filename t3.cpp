@@ -24,7 +24,8 @@ void _print(string x) { cout<<x;}
 void _print(bool x) { cout<<x;}
 void _print(size_t x) { cout<<x;}
 
-void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<int, int> x) { cout << x.first << "," << x.second; }
+// void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
 void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
 void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
 
