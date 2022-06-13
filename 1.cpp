@@ -36,81 +36,70 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
-int I(char ch){ return (int)(ch - 'a'); }
+string ans = "";
 
-const ll mod = 1e9 + 7;
+const int N  = 1e5 + 1;
+// string dp[N][6]{"$"};
 
-ll power(ll a, ll n){
-    ll res = 1;
-    while(n){
-        if(n&1) res = (res * a) % mod;
-        n /= 2;
-        a = (a * a) % mod;
+void dfs(int p, int f, vector<int>&a, string &str){
+
+    if(p + 1 == a.size()){
+        ans = str;
+        return ;
     }
-    return res;
+
+    // if(dp[p][f] != "$") return ; //dp[p][f];
+    // if(dp[p][f] != -1) return dp[p][f];
+
+    if(a[p] < a[p + 1]){
+        for(int i = f + 1; i <= 5; ++ i){
+            str += to_string(i);
+            dfs(p + 1, i, a, str);
+            str.pop_back();
+            if(ans.size()) break;
+        }
+    }
+    else if(a[p] > a[p + 1]){
+        for(int i = 1; i < f; ++ i){
+            str += to_string(i);
+            dfs(p + 1, i, a, str);
+            str.pop_back();
+            if(ans.size()) break;
+        }
+    }
+    else {
+        for(int i = 1; i <= 5; ++ i){
+            if(i == f) continue;
+            str += to_string(i);
+            dfs(p + 1, i, a, str);
+            str.pop_back();
+            if(ans.size()) break;
+        }
+    }
+    if(ans.size()) return ;
+    // dp[p][f] = "s";
+
 }
 
 void testcase(int test){ // testcasesid
-    // total substrings
-    // longest substrings
-    // minimum number of substrings
 
     int n;
     cin >> n;
-    string s;
-    cin >> s;
+    vector<int>a(n);
+    for(int i = 0; i < n; ++ i) cin >> a[i];
 
-    vector<int>limit(26), curr(26,0);
-    for(int i = 0; i < 26; ++ i) cin >> limit[i];
 
-    ll ans = 0;
-    int ans2 = 0, ans3 = 0;
-    int l = 0;
-    for(int i = 0; i < n; ++ i){
-        int idx = I(s[i]);
-        curr[idx]++;
-
-        while(curr[idx] > limit[idx]){
-            -- curr[I(s[l])];
-            ++ l;
-        }
-
-        ll len;
-        len = i - l + 1;
-        // debug(len);
-        if(len == n) break;
-        // len = min(len,(ll) n - 1);
-        ans = (ans + len*(len + 1) / 2 + mod)%mod;
-
-        len = i - 1 - l + 1;
-        if(len){
-            ans = ans + mod - len*(len + 1) / 2;
-            ans %= mod;
-        }
-        ans2 = max((int)ans2, i - l + 1);
+    for(int i = 1; i <= 5; ++ i){
+        string str = to_string(i);
+        if(ans.size() == 0) dfs(0, i, a, str);
+        else break;
     }
-    ans2 = min((int)ans2, n - 1);
 
-    cout << ans << endl;
-    cout << ans2 << endl;
-
-    curr.clear();
-
-    for(int i = 0; i < n; ++ i){
-        int idx = I(s[i]);
-        ++ curr[idx];
-
-        if(curr[idx] > limit[idx]){
-            ++ ans3;
-            curr.clear();
-            curr[idx] = 1;
-        }
+    if(ans.size()){
+        // cout<< ans << endl;
+        for(char &ch: ans) cout << ch << " ";
     }
-    ++ ans3;
-    if(ans3 == 1) ++ ans3;
-    // if(ans3 == 0) ans3 = 2;
-
-    cout << ans3 << endl;
+    else pnl(-1);
 
 
     return;
