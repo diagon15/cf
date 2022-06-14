@@ -36,71 +36,36 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
-string ans = "";
 
-const int N  = 1e5 + 1;
-// string dp[N][6]{"$"};
+int n;
+int t[200 + 1];
+const int Mtime = 300;
+int dp[201][Mtime];
+int solve(int item, int time, int cost){
+    if(item == n + 1) return cost;
+    if(dp[item][time] != -1) return dp[item][time];
 
-void dfs(int p, int f, vector<int>&a, string &str){
+    int res = 1e9;
+    if(time >= Mtime) return res;
 
-    if(p + 1 == a.size()){
-        ans = str;
-        return ;
+    for(int tm = time + 1; tm <= Mtime; ++ tm){
+        if(res < cost + abs(t[item] - tm)) continue;
+        res = min(res, dp[item][tm] = solve(item + 1, tm, cost + abs(t[item] - tm)));
     }
 
-    // if(dp[p][f] != "$") return ; //dp[p][f];
-    // if(dp[p][f] != -1) return dp[p][f];
-
-    if(a[p] < a[p + 1]){
-        for(int i = f + 1; i <= 5; ++ i){
-            str += to_string(i);
-            dfs(p + 1, i, a, str);
-            str.pop_back();
-            if(ans.size()) break;
-        }
-    }
-    else if(a[p] > a[p + 1]){
-        for(int i = 1; i < f; ++ i){
-            str += to_string(i);
-            dfs(p + 1, i, a, str);
-            str.pop_back();
-            if(ans.size()) break;
-        }
-    }
-    else {
-        for(int i = 1; i <= 5; ++ i){
-            if(i == f) continue;
-            str += to_string(i);
-            dfs(p + 1, i, a, str);
-            str.pop_back();
-            if(ans.size()) break;
-        }
-    }
-    if(ans.size()) return ;
-    // dp[p][f] = "s";
-
+    return dp[item][time] = res;
 }
 
 void testcase(int test){ // testcasesid
 
-    int n;
+    fill_n(&dp[0][0], 201*Mtime, -1);
     cin >> n;
-    vector<int>a(n);
-    for(int i = 0; i < n; ++ i) cin >> a[i];
+    for(int i = 0; i < n; ++ i) cin >> t[i];
+    sort(t + 1, t + n + 1);
 
+    int res = solve(1, 0, 0);
 
-    for(int i = 1; i <= 5; ++ i){
-        string str = to_string(i);
-        if(ans.size() == 0) dfs(0, i, a, str);
-        else break;
-    }
-
-    if(ans.size()){
-        // cout<< ans << endl;
-        for(char &ch: ans) cout << ch << " ";
-    }
-    else pnl(-1);
-
+    cout << res << endl;
 
     return;
 }
@@ -109,7 +74,7 @@ void testcase(int test){ // testcasesid
 int32_t main(){
     fastio;
     int test=1,z=1;
-    // cin>>test;
+    cin>>test;
     while(z<=test){
         testcase(z); z++;
     }
