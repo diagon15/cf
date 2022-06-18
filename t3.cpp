@@ -10,7 +10,7 @@ using namespace std;
 
 using ll = long long;
 #define fastio    ios_base::sync_with_stdio(false);
-#define endl "\n";
+#define endl "\n"
 
 void yes(){ cout<<"YES"<<"\n"; return ;}
 void no(){ cout<<"NO"<<"\n"; return ;}
@@ -37,12 +37,19 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
 
+template<typename T>
+void p2darr(T* arr, int n, int m) { for (int i = 0; i < n; ++i) { for (int j = 0; j < m; ++j) cout << arr[i][j] << " "; cout << "\n"; } }
+template<typename T>
+void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
+
 
 void testcase(int test){ // testcasesid
 
 
+
     return;
 }
+
 
 
 int32_t main(){
@@ -60,4 +67,10 @@ for std::lcm use -std=c++17 to compile locally
 g++ *.cpp > log.txt 2>&1
 
 topics:
+
+------------ TEEEPS --------------------
+If you have an observation, complement of that observation can be a better observation for code!!
+
+in dp, try to recognise the number of DIFFERENT states first. else your going wrong way!
+
 */

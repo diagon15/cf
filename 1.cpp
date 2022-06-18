@@ -37,44 +37,47 @@ template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _pr
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
 // #define debug(x)
 
-int n;
-int t[200 + 1];
-const int Mtime = 300;
-int dp[201][Mtime];
-int solve(int item, int time, int cost){
-    if(item == n + 1) return cost;
-    if(dp[item][time] != -1) return dp[item][time];
+template<typename T>
+void p2darr(T* arr, int n, int m) { for (int i = 0; i < n; ++i) { for (int j = 0; j < m; ++j) cout << arr[i][j] << " "; cout << "\n"; } }
+template<typename T>
+void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
-    int res = 1e9;
-    if(time >= Mtime) return res;
-
-    for(int tm = time + 1; tm <= Mtime; ++ tm){
-        if(res < cost + abs(t[item] - tm)) continue;
-        res = min(res, dp[item][tm] = solve(item + 1, tm, cost + abs(t[item] - tm)));
-    }
-
-    return dp[item][time] = res;
-}
+const int N = 1e6 + 5;
+int freq[N];
 
 void testcase(int test){ // testcasesid
 
-    fill_n(&dp[0][0], 201*Mtime, -1);
-    cin >> n;
-    for(int i = 0; i < n; ++ i) cin >> t[i];
-    sort(t + 1, t + n + 1);
+    int n, c;
+    cin >> n >> c;
 
-    int res = solve(1, 0, 0);
+    set<pair<int, int>> st;
+    bool ok = true;
+    for(int i = 0; i < n; ++ i){
+        int val;
+        cin >> val;
+        if(val == c){
+            ++ freq[c];
+            while(not st.empty() and (*st.begin()).first < freq[c]) st.erase(st.begin());
+            if(st.empty()) ok = false;
+            break;
+        }
+        else st.erase({freq[val], val}), ++ freq[val], st.insert({freq[val], val});
+    }
 
-    cout << res << endl;
+
+    if(not ok) cout <<"-1" << endl;
+    else cout << (*--st.end()).second << endl;
+
 
     return;
 }
 
 
+
 int32_t main(){
     fastio;
     int test=1,z=1;
-    cin>>test;
+    // cin>>test;
     while(z<=test){
         testcase(z); z++;
     }
@@ -86,4 +89,10 @@ for std::lcm use -std=c++17 to compile locally
 g++ *.cpp > log.txt 2>&1
 
 topics:
+
+------------ TEEEPS --------------------
+If you have an observation, complement of that observation can be a better observation for code!!
+
+in dp, try to recognise the number of DIFFERENT states first. else your going wrong way!
+
 */
