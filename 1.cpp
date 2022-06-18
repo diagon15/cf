@@ -10,7 +10,7 @@ using namespace std;
 
 using ll = long long;
 #define fastio    ios_base::sync_with_stdio(false);
-#define endl "\n";
+#define endl "\n"
 
 void yes(){ cout<<"YES"<<"\n"; return ;}
 void no(){ cout<<"NO"<<"\n"; return ;}
@@ -42,31 +42,55 @@ void p2darr(T* arr, int n, int m) { for (int i = 0; i < n; ++i) { for (int j = 0
 template<typename T>
 void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
-const int N = 1e6 + 5;
-int freq[N];
 
-void testcase(int test){ // testcasesid
+void testcase(int test){ // testcase
 
-    int n, c;
-    cin >> n >> c;
-
-    set<pair<int, int>> st;
-    bool ok = true;
-    for(int i = 0; i < n; ++ i){
-        int val;
-        cin >> val;
-        if(val == c){
-            ++ freq[c];
-            while(not st.empty() and (*st.begin()).first < freq[c]) st.erase(st.begin());
-            if(st.empty()) ok = false;
-            break;
-        }
-        else st.erase({freq[val], val}), ++ freq[val], st.insert({freq[val], val});
+    int n, m;
+    cin >> n >> m;
+    vector<array<int, 3>> edges (n);
+// <wi, bi, i>
+    for(int i = 0; i < m; ++ i){
+        cin >> edges[i][0] >> edges[i][1];
+        edges[i][2] = i;
     }
 
+    sort(edges.begin(), edges.end(),[](const auto &a, const auto & b){
+        return a[1] > b[1];
+    });
 
-    if(not ok) cout <<"-1" << endl;
-    else cout << (*--st.end()).second << endl;
+
+    int start = 0;
+    int end = 1e8;
+    int latest = 1;
+
+    vector<array<int, 3>> npars;
+
+    for(int i = 0;  i < m; ++ i){
+        array <int, 3> arr = edges[i];
+        if(arr[1] == 1){
+            npars.push_back({arr[2], latest, latest + 1});
+            ++ latest;
+        }
+        else{
+            ++ end;
+            if(end > latest){
+                if(start + 1 + 2 > latest) return pnl(-1);
+                else{
+                    ++ start;
+                    end = start + 2;
+                }
+            }
+            // create an bi=0 edge
+            npars.push_back({arr[2], start, end});
+        }
+    }
+
+    sort(npars.begin(), npars.end());
+
+    for(auto &u: npars){
+        cout << u[1] << " " << u[2] << endl;
+    }
+
 
 
     return;
