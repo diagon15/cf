@@ -1,87 +1,53 @@
-// problem link:
-#include <bits/stdc++.h>
+#include "bits/stdc++.h"
+
+#ifdef local
+#include "custom/debugger.h"
+#else
+#define debug(...) 42;
+#endif
+
 using namespace std;
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
+#define int long long
 
-// template <class T>
-// using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-
-using ll = long long;
-#define fastio    ios_base::sync_with_stdio(false);
-#define endl "\n";
-
-void yes(){ cout<<"YES"<<"\n"; return ;}
-void no(){ cout<<"NO"<<"\n"; return ;}
-template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
-// std::apply([](auto&&... args) {((cout << args <<" "), ...); }, tp); // tuple print
-
-void _print(int x) { cout<<x;}
-void _print(long long x) { cout<<x;}
-void _print(char x) { cout<<x;}
-void _print(string x) { cout<<x;}
-void _print(bool x) { cout<<x;}
-void _print(size_t x) { cout<<x;}
-
-void _print(pair<int, int> x) { cout << x.first << "," << x.second; }
-// void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
-void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
-void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
-
-template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
-template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
-template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
-
-
-#define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
-// #define debug(x)
-
-template<typename T>
-void p2darr(T* arr, int n, int m) { for (int i = 0; i < n; ++i) { for (int j = 0; j < m; ++j) cout << arr[i][j] << " "; cout << "\n"; } }
-// template<typename T>
-// void pvpair(T & vp){ for(int i = 0; i < vp.size(); ++ i) cout << '{' vp[i].first <<", " << vp[i].second <<'}'<< endl; }
-
-
-
-ll x0;
-ll y0sa;
-ll ax;
-ll ay;
-ll bx;
-ll by;
-ll xs;
-ll ys;
-ll t;
-
-void testcase(int test){ // testcasesid
-
-
-
-    return;
-}
-
-
-
-int32_t main(){
-    fastio;
-    int test=1,z=1;
-    cin>>test;
-    while(z<=test){
-        testcase(z); z++;
+void solve([[maybe_unused]] int test) {
+    int n, m;
+    scanf("%lld%lld", &n, &m);
+    vector <vector <int>> a(n, vector <int>(m));
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            scanf("%lld", &a[i][j]);
+        }
     }
-    return 0;
+    vector <vector <int>> ones(n, vector <int>(m, 0));
+    vector <vector <int>> minus(n, vector <int>(m, 0));
+    for (int i = n - 1; i >= 0; i--) {
+        for (int j = m - 1; j >= 0; j--) {
+            if (i < n - 1) {
+                ones[i][j] = max(ones[i][j], ones[i + 1][j]);
+                minus[i][j] = max(minus[i][j], minus[i + 1][j]);
+            }
+            if (j < m - 1) {
+                ones[i][j] = max(ones[i][j], ones[i][j + 1]);
+                minus[i][j] = max(minus[i][j], minus[i][j + 1]);
+            }
+            ones[i][j] += a[i][j] == 1;
+            minus[i][j] += a[i][j] == -1;
+        }
+    }
+    // if (test == 5) debug(ones);
+    bool ans = true;
+    if ((n + m - 1) & 1) ans = false;
+    int req = n + m - 1;
+    req /= 2;
+    if (ones[0][0] < req) ans = false;
+    if (minus[0][0] < req) ans = false;
+    ans ? printf("YES\n") : printf("NO\n");
 }
-/*
-for std::lcm use -std=c++17 to compile locally
 
-g++ *.cpp > log.txt 2>&1
-
-topics:
-
------------- TEEEPS --------------------
-If you have an observation, complement of that observation can be a better observation for code!!
-
-in dp, try to recognise the number of DIFFERENT states first. else your going wrong way!
-
-*/
+int32_t main() {
+    int t = 1;
+    cin >> t;
+    for (int tt = 1; tt <= t; tt++) {
+        solve(tt);
+    }
+}

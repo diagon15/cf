@@ -1,4 +1,5 @@
-// problem link:
+// problem link: https://codeforces.com/problemset/problem/1043/D
+// sol: same https://codeforces.com/contest/1043/submission/45001602
 #include <bits/stdc++.h>
 using namespace std;
 // #include <ext/pb_ds/assoc_container.hpp>
@@ -12,26 +13,26 @@ using ll = long long;
 #define fastio    ios_base::sync_with_stdio(false);
 #define endl "\n"
 
-void yes(){ cout<<"YES"<<"\n"; return ;}
-void no(){ cout<<"NO"<<"\n"; return ;}
-template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
+void yes() { cout << "YES" << "\n"; return; }
+void no() { cout << "NO" << "\n"; return; }
+template<typename T> void pnl(T a) { cout << a << "\n"; return; }
 // std::apply([](auto&&... args) {((cout << args <<" "), ...); }, tp); // tuple print
 
-void _print(int x) { cout<<x;}
-void _print(long long x) { cout<<x;}
-void _print(char x) { cout<<x;}
-void _print(string x) { cout<<x;}
-void _print(bool x) { cout<<x;}
-void _print(size_t x) { cout<<x;}
+void _print(int x) { cout << x; }
+void _print(long long x) { cout << x; }
+void _print(char x) { cout << x; }
+void _print(string x) { cout << x; }
+void _print(bool x) { cout << x; }
+void _print(size_t x) { cout << x; }
 
 void _print(pair<int, int> x) { cout << x.first << "," << x.second; }
 // void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
-void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
-void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<long long, long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<string, string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
 
-template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
-template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
-template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(vector<T> v) { cout << "[";     for (T i : v) _print(i), _print(' ');      cout << "]"; }
+template<class T> void _print(set<T> v) { cout << "[";     for (T i : v) _print(i), _print(' ');      cout << "]"; }
+template<class T> void _print(multiset<T> v) { cout << "[";     for (T i : v) _print(i), _print(' ');      cout << "]"; }
 
 
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
@@ -43,66 +44,58 @@ template<typename T>
 void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
 
-void testcase(int test){ // testcase
+void testcase(int test) { // testcasesid
 
-    int n, m;
-    cin >> n >> m;
-    vector<array<int, 3>> edges (n);
-// <wi, bi, i>
-    for(int i = 0; i < m; ++ i){
-        cin >> edges[i][0] >> edges[i][1];
-        edges[i][2] = i;
+    int m, n;
+    // cin >> m >> n;
+    cin >> n >> m ;
+    int arr[m][n], pos[m][n];
+    vector<int>ans(n);
+
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            cin >> arr[i][j];
+            --arr[i][j];
+            pos[i][arr[i][j]] = j;
+        }
     }
 
-    sort(edges.begin(), edges.end(),[](const auto &a, const auto & b){
-        return a[1] > b[1];
-    });
+    for (int i = 0; i < n; ++i) {
 
+        if (i == 0) ans[0] = 1;
+        else ans[i] = max(1, ans[i - 1] - 1);
 
-    int start = 0;
-    int end = 1e8;
-    int latest = 1;
+        while (i + ans[i] < n) {
 
-    vector<array<int, 3>> npars;
-
-    for(int i = 0;  i < m; ++ i){
-        array <int, 3> arr = edges[i];
-        if(arr[1] == 1){
-            npars.push_back({arr[2], latest, latest + 1});
-            ++ latest;
-        }
-        else{
-            ++ end;
-            if(end > latest){
-                if(start + 1 + 2 > latest) return pnl(-1);
-                else{
-                    ++ start;
-                    end = start + 2;
-                }
+            // int oval = arr[0]
+            int cval = arr[0][i];
+            int nval = arr[0][i + ans[i]];
+            bool bad = false;
+            for (int j = 0; j < m; ++j) {
+                if (pos[j][cval] + ans[i] != pos[j][nval]) bad = true;
             }
-            // create an bi=0 edge
-            npars.push_back({arr[2], start, end});
+
+            if (bad) break;
+            ++ans[i];
         }
     }
+    // for(int i = 0; i < m; ++ i) cout << ans[i] << " "; cout << endl;
+    ll res = 0;
 
-    sort(npars.begin(), npars.end());
+    for (int i = 0; i < n; ++i) res += ans[i];
 
-    for(auto &u: npars){
-        cout << u[1] << " " << u[2] << endl;
-    }
-
-
+    cout << res << endl;
 
     return;
 }
 
 
 
-int32_t main(){
+int32_t main() {
     fastio;
-    int test=1,z=1;
-    // cin>>test;
-    while(z<=test){
+    int test = 1, z = 1;
+    // cin >> test;
+    while (z <= test) {
         testcase(z); z++;
     }
     return 0;
