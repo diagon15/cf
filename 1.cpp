@@ -1,5 +1,4 @@
-// problem link: https://codeforces.com/problemset/problem/1043/D
-// sol: same https://codeforces.com/contest/1043/submission/45001602
+// problem link:
 #include <bits/stdc++.h>
 using namespace std;
 // #include <ext/pb_ds/assoc_container.hpp>
@@ -13,26 +12,26 @@ using ll = long long;
 #define fastio    ios_base::sync_with_stdio(false);
 #define endl "\n"
 
-void yes() { cout << "YES" << "\n"; return; }
-void no() { cout << "NO" << "\n"; return; }
-template<typename T> void pnl(T a) { cout << a << "\n"; return; }
+void yes(){ cout<<"YES"<<"\n"; return ;}
+void no(){ cout<<"NO"<<"\n"; return ;}
+template<typename T> void pnl(T a){ cout<<a<<"\n"; return;}
 // std::apply([](auto&&... args) {((cout << args <<" "), ...); }, tp); // tuple print
 
-void _print(int x) { cout << x; }
-void _print(long long x) { cout << x; }
-void _print(char x) { cout << x; }
-void _print(string x) { cout << x; }
-void _print(bool x) { cout << x; }
-void _print(size_t x) { cout << x; }
+void _print(int x) { cout<<x;}
+void _print(long long x) { cout<<x;}
+void _print(char x) { cout<<x;}
+void _print(string x) { cout<<x;}
+void _print(bool x) { cout<<x;}
+void _print(size_t x) { cout<<x;}
 
 void _print(pair<int, int> x) { cout << x.first << "," << x.second; }
 // void _print(pair<int,int> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
-void _print(pair<long long, long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
-void _print(pair<string, string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<long long,long long> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
+void _print(pair<string,string> x) { _print("{"); _print(x.first); _print(","); _print(x.second); _print("}\n"); }
 
-template<class T> void _print(vector<T> v) { cout << "[";     for (T i : v) _print(i), _print(' ');      cout << "]"; }
-template<class T> void _print(set<T> v) { cout << "[";     for (T i : v) _print(i), _print(' ');      cout << "]"; }
-template<class T> void _print(multiset<T> v) { cout << "[";     for (T i : v) _print(i), _print(' ');      cout << "]"; }
+template<class T> void _print(vector<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(set<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
+template<class T> void _print(multiset<T> v){    cout<< "[";     for(T i: v) _print(i), _print(' ');      cout<<"]";      }
 
 
 #define debug(x)    cout<<#x<<" "; (_print(x)); cout<<"\n";
@@ -43,59 +42,76 @@ void p2darr(T* arr, int n, int m) { for (int i = 0; i < n; ++i) { for (int j = 0
 template<typename T>
 void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
+int n, m, rk;
+vector<string>vs;
+int x[]{1, 0, 0, -1};
+int y[]{0, -1, 1, 0};
+char op[]{'D', 'L', 'R', 'U'};
+string ans = "Z";
+int si = -1, sj = -1;
+bool gotit = false;
 
-void testcase(int test) { // testcasesid
+void solve(int i, int j, int k, string &str){
+    if(k < 0) return ;
 
-    int m, n;
-    // cin >> m >> n;
-    cin >> n >> m ;
-    int arr[m][n], pos[m][n];
-    vector<int>ans(n);
-
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < n; ++j) {
-            cin >> arr[i][j];
-            --arr[i][j];
-            pos[i][arr[i][j]] = j;
+    if(k == 0){
+        if(si == i and sj == j){
+            gotit = true;
+            ans = min(ans, str);
         }
+        return ;
     }
 
-    for (int i = 0; i < n; ++i) {
+    for(int z = 0; z < 4; ++ z){
+        int ii = i + x[z];
+        int jj = j + y[z];
 
-        if (i == 0) ans[0] = 1;
-        else ans[i] = max(1, ans[i - 1] - 1);
+        if(ii < 0 or ii >= n or jj < 0 or jj >= m or vs[ii][jj] == '*') continue;
+        str += op[z];
+        solve(ii, jj, k - 1, str);
+        str.pop_back();
+        if(gotit) return ;
+    }
 
-        while (i + ans[i] < n) {
+    return ;
+}
 
-            // int oval = arr[0]
-            int cval = arr[0][i];
-            int nval = arr[0][i + ans[i]];
-            bool bad = false;
-            for (int j = 0; j < m; ++j) {
-                if (pos[j][cval] + ans[i] != pos[j][nval]) bad = true;
+
+void testcase(int test){ // testcasesid
+    cin >> n >> m;
+
+    vs = vector<string>(n, string());
+
+    for(int i = 0; i < n; ++ i){
+        cin >> vs[i];
+    }
+
+    if(rk&1) return pnl("IMPOSSIBLE");
+
+
+    for(int i = 0; i < n and si == -1; ++ i){
+        for(int j = 0; j < m and si == -1; ++ j){
+            if(vs[i][j] == 'X'){
+                si = i, sj = j;
             }
-
-            if (bad) break;
-            ++ans[i];
         }
     }
-    // for(int i = 0; i < m; ++ i) cout << ans[i] << " "; cout << endl;
-    ll res = 0;
 
-    for (int i = 0; i < n; ++i) res += ans[i];
-
-    cout << res << endl;
+    string str = "";
+    solve(si, sj, rk, str);
+    if(ans == "Z") ans = "IMPOSSIBLE";
+    cout << ans << endl;
 
     return;
 }
 
 
 
-int32_t main() {
+int32_t main(){
     fastio;
-    int test = 1, z = 1;
-    // cin >> test;
-    while (z <= test) {
+    int test=1,z=1;
+    // cin>>test;
+    while(z<=test){
         testcase(z); z++;
     }
     return 0;
