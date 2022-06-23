@@ -42,65 +42,122 @@ void p2darr(T* arr, int n, int m) { for (int i = 0; i < n; ++i) { for (int j = 0
 template<typename T>
 void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
-int n, m, rk;
-vector<string>vs;
-int x[]{1, 0, 0, -1};
-int y[]{0, -1, 1, 0};
-char op[]{'D', 'L', 'R', 'U'};
-string ans = "Z";
-int si = -1, sj = -1;
-bool gotit = false;
-
-void solve(int i, int j, int k, string &str){
-    if(k < 0) return ;
-
-    if(k == 0){
-        if(si == i and sj == j){
-            gotit = true;
-            ans = min(ans, str);
-        }
-        return ;
-    }
-
-    for(int z = 0; z < 4; ++ z){
-        int ii = i + x[z];
-        int jj = j + y[z];
-
-        if(ii < 0 or ii >= n or jj < 0 or jj >= m or vs[ii][jj] == '*') continue;
-        str += op[z];
-        solve(ii, jj, k - 1, str);
-        str.pop_back();
-        if(gotit) return ;
-    }
-
-    return ;
+void pit(int x){
+    cout << x << endl;
+    cout.flush();
+}
+#define hello cout <<"hello\n";
+int read(){
+    int x;
+    cin >> x;
+    return x;
 }
 
-
 void testcase(int test){ // testcasesid
+
+    set<pair<pair<int, int>, pair<int, int>>>sp;
+    // sp <bigger against, smaller against>
+
+    set<pair<int, int>>pi;
+    // <power, index> -> 2n initial size
+    map<int, int>pairs;
+
+    int n, m;
     cin >> n >> m;
-
-    vs = vector<string>(n, string());
-
-    for(int i = 0; i < n; ++ i){
-        cin >> vs[i];
+    int n2 = 2* n;
+    vector<int>v(n + 1);
+    for(int i = 1; i <= n2; ++ i){
+        int power;
+        cin >> power;
+        v[i] = power;
+        pi.insert({power, i});
     }
 
-    if(rk&1) return pnl("IMPOSSIBLE");
+    for(int i = 0; i < m; ++ i){
+        int f, s;
+        cin >> f >> s;
+        pairs[f] = s;
+        pairs[s] = f;
+        if(v[f] < v[s]) swap(f, s);
+        sp.insert({{v[f], f}, {v[s], s}});
+    }
 
 
-    for(int i = 0; i < n and si == -1; ++ i){
-        for(int j = 0; j < m and si == -1; ++ j){
-            if(vs[i][j] == 'X'){
-                si = i, sj = j;
+    int turn ;
+    cin >> turn;
+
+    for(auto &u: pi){
+        // cout << u.first.first <<","<<u.first.second << " "<< u.second.first <<"," << u.second.second<<endl;
+        cout << u.first << " " << u.second << endl;
+    }
+
+    if(turn == 1){
+        while(not sp.empty()){
+            auto useful = *--sp.end();
+            pit(useful.first.first);
+            pi.erase(useful.first);
+            read(); // coz we know it has to be useful.second
+            pi.erase(useful.second);
+            sp.erase(useful);
+        }
+        // covered = 2*m;
+
+        while(not pi.empty()){
+            auto best = *--pi.end();
+            pit(best.first);
+            pi.erase(best);
+            int your_chance = read();
+            pi.erase({v[your_chance], your_chance});
+        }
+    }
+    else{
+
+        while(not pi.empty()){
+            int hm = read();
+            // pair<int, int> choice = {v[hm], hm};
+            // if choice exists in sp
+            if(pairs.count(hm)){
+                int my_forced_val = pairs[hm];
+                pit(my_forced_val);
+                pairs.erase(hm);
+                pairs.erase(my_forced_val);
+                sp.erase({{v[hm], hm}, {v[my_forced_val], my_forced_val}});
+                pi.erase({v[hm], hm});
+                swap(hm, my_forced_val);
+                sp.erase({{v[hm], hm}, {v[my_forced_val], my_forced_val}});
+                pi.erase({v[hm], hm});
+
+            }
+            else{
+                hello;
+7
+                while (not sp.empty()) {
+                    auto useful = *--sp.end();
+                    pit(useful.first.second);
+                    pi.erase(useful.first);
+                    int val = read(); // coz we know it has to be useful.second
+                    // pi.erase(useful.second);
+                    sp.erase(useful);
+                }
+                hello;
+                // covered = 2*m;
+                debug(pi.size());
+                return ;
+                while (not pi.empty()) {
+                    auto best = *--pi.end();
+                    pit(best.first);
+                    if(pi.size())
+                    pi.erase(best);
+                    if(pi.empty()) break;
+                    int your_chance = read();
+                    if(pi.size())
+                    pi.erase({ v[your_chance], your_chance });
+                }
             }
         }
     }
 
-    string str = "";
-    solve(si, sj, rk, str);
-    if(ans == "Z") ans = "IMPOSSIBLE";
-    cout << ans << endl;
+        cout << pi.size() << endl;
 
     return;
 }
