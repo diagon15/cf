@@ -42,48 +42,55 @@ void p2darr(T* arr, int n, int m) { for (int i = 0; i < n; ++i) { for (int j = 0
 template<typename T>
 void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
+bool ok;
+bool check(vector<int>& arr){
+    int n =arr.size();
+    int onfirst[n];
+    fill(onfirst, onfirst + n, 0);
+    for(int i = 1; i < n; ++ i){
+        for(int j = 0; j < n; ++ j){
+            if((ll)i*(arr[j] - arr[0]) == (ll)j*(arr[i] - arr[0])){
+                onfirst[j] = 1;
+            }
+            else onfirst[j] = 0;
+        }
 
-int N;
-struct seg {
-    vector<int>a;
+        int sum = accumulate(onfirst, onfirst + n, 0);
 
-    void build(vector<int>& arr, int v, int l, int r) {
-        if (l == r) a[v] = arr[l];
-        else {
-            int mid = l + (r - l) / 2;
-            build(arr, 2 * v , l, mid);
-            build(arr, 2 * v + 1, mid + 1, r);
-            a[v] = min(a[2 * v], a[2 * v + 1]);
+        int sec = -1;
+        bool pass2 = true;
+        for(int j = 1; j < n; ++ j){
+            if(onfirst[j]) continue;
+            if(not onfirst[j] and sec == -1){
+                sec = j;
+            }
+            else if((ll)(j- sec)*(arr[i] - arr[0]) != (ll)i*(arr[j] - arr[sec])){
+                pass2 = false; break;
+            }
+        }
+        if(pass2 and sum != n){
+            return true;
         }
     }
+    return false;
 
-    int getmin(int l, int r, int id = 1, int al = 0, int ar = N-1) {
-        // if (al > ar) return INT_MAX;
-        if(r < al or ar < l) return INT_MAX;
-        if (l <= al and ar <= r) return a[id];
-        int mid = al + (ar - al) / 2;
-        debug(id);
-        return min(getmin(l, r, id * 2, al, mid), getmin(l, r, id * 2 + 1, mid + 1, ar));
-    }
-
-    seg(vector<int>& arr) //:N(arr.size())
-    {
-        a = vector<int>(4*N);
-        build(arr, 1, 0, (int)arr.size() - 1);
-    }
-};
-
+}
 
 void testcase(int test){ // testcasesid
 
-    vector<int>arr{4,5,8,34,2,89,6,3,7,32,6,8};
-    N = arr.size();
-    seg sg(arr);
-    int n = arr.size();
-    cout << sg.getmin(n-2, n-1) <<endl;
-    // cout << sg.getmin(5,9) <<endl;
-    // pnl("dsf");
+    int n;
+    cin >> n;
 
+    vector<int>arr(n);
+    for(int i = 0; i < n; ++ i) cin >> arr[i];
+
+    ok |= check(arr);
+    reverse(arr.begin(), arr.end());
+    ok |= check(arr);
+
+
+
+    ok ? yes(): no();
 
 
     return;
@@ -93,7 +100,7 @@ void testcase(int test){ // testcasesid
 
 int32_t main(){
     fastio;
-    int test=1,z=1;
+    int test=1,z=1;n
     // cin>>test;
     while(z<=test){
         testcase(z); z++;
