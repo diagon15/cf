@@ -42,55 +42,67 @@ void p2darr(T* arr, int n, int m) { for (int i = 0; i < n; ++i) { for (int j = 0
 template<typename T>
 void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
-bool ok;
-bool check(vector<int>& arr){
-    int n =arr.size();
-    int onfirst[n];
-    fill(onfirst, onfirst + n, 0);
-    for(int i = 1; i < n; ++ i){
-        for(int j = 0; j < n; ++ j){
-            if((ll)i*(arr[j] - arr[0]) == (ll)j*(arr[i] - arr[0])){
-                onfirst[j] = 1;
-            }
-            else onfirst[j] = 0;
-        }
-
-        int sum = accumulate(onfirst, onfirst + n, 0);
-
-        int sec = -1;
-        bool pass2 = true;
-        for(int j = 1; j < n; ++ j){
-            if(onfirst[j]) continue;
-            if(not onfirst[j] and sec == -1){
-                sec = j;
-            }
-            else if((ll)(j- sec)*(arr[i] - arr[0]) != (ll)i*(arr[j] - arr[sec])){
-                pass2 = false; break;
-            }
-        }
-        if(pass2 and sum != n){
-            return true;
-        }
-    }
-    return false;
-
-}
 
 void testcase(int test){ // testcasesid
 
     int n;
     cin >> n;
+    vector<string>s(2);
+    cin >> s[0] >> s[1];
+    while(s[0].back() == '.' and s[1].back() == '.'){
+        s[0].pop_back();
+        s[1].pop_back();
+    }
 
-    vector<int>arr(n);
-    for(int i = 0; i < n; ++ i) cin >> arr[i];
+    reverse(s[0].begin(), s[0].end());
+    reverse(s[1].begin(), s[1].end());
 
-    ok |= check(arr);
-    reverse(arr.begin(), arr.end());
-    ok |= check(arr);
+    while(s[0].back() == '.' and s[1].back() == '.'){
+        s[0].pop_back();
+        s[1].pop_back();
+    }
+    reverse(s[0].begin(), s[0].end());
+    reverse(s[1].begin(), s[1].end());
+    // s[0] += ".";
+    // s[1] += ".";
+
+    n = s[0].size();
+    // int dp[2][n];
+    vector<vector<int>>dp(2, vector<int>(n));
+    const int MAX = 1e8;
+    // fill_n(&dp[0][0],2*n, MAX);
+    for (int i = 0; i < 2; ++i) {
+        for (int j = 0; j < n; ++j)     dp[i][j] = 1e8;
+    }
+    // if(s[0][0] == '*') dp[0][0] = 0;
+    // else if(s[1][0] == '*') dp[1][0] = 0;
+    dp[0][0] = 0;
+    dp[1][0] = 0;
+
+    for(int i = 0; i + 1 < n; ++ i){
+        dp[0][i + 1] = min({dp[0][i + 1], dp[0][i] + 1 + (s[1][i] == '*' ? 1 : 0), dp[1][i] + 2});
+        dp[1][i + 1] = min({dp[1][i + 1], dp[1][i] + 1 + (s[0][i] == '*' ? 1 : 0), dp[0][i] + 2});
+    }
+
+    int ans;cp t
+    if(s[0][n - 1] == '*' and s[1][n - 1] == '*') ans = min(dp[0][n - 1], dp[1][n - 1]) + 1;
+    else if(s[0][n - 1] == '*') ans = dp[0][n - 1];
+    else ans = dp[1][n - 1];
 
 
+    auto pit = [&](){
+        for(int i = 0; i < 2; ++ i){
+            for(int j = 0; j < n; ++ j){
+                cout << dp[i][j] ;
+            }
+            cout << endl;
+        }
+    };
 
-    ok ? yes(): no();
+    // pit();
+    cout << ans << endl;
+    // cout << min(dp[0][n - 1] - 1 , dp[1][n -1] - 1) << endl;
+
 
 
     return;
@@ -100,8 +112,8 @@ void testcase(int test){ // testcasesid
 
 int32_t main(){
     fastio;
-    int test=1,z=1;n
-    // cin>>test;
+    int test=1,z=1;
+    cin>>test;
     while(z<=test){
         testcase(z); z++;
     }
@@ -118,5 +130,33 @@ topics:
 If you have an observation, complement of that observation can be a better observation for code!!
 
 in dp, try to recognise the number of DIFFERENT states first. else your going wrong way!
+
+*
+.
+
+.
+*
+
+*
+*
+
+.
+.
+
+dp[0][i + 1] = min(dp[0][i + 1], dp[0][i] + 1 + (dp[1][i] == '*' ? 1 : 0));
+dp[1][i + 1] = min(dp[1][i + 1], dp[1][i] + 1 + (dp[0][i] == '*' ? 1 : 0));
+
+3
+*.*
+.*.
+
+0xx
+0xx
+
+01x
+02x
+
+013
+022
 
 */
