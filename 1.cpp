@@ -1,4 +1,4 @@
-// problem link:
+// problem link: https://cses.fi/problemset/task/1136/
 #include <bits/stdc++.h>
 using namespace std;
 // #include <ext/pb_ds/assoc_container.hpp>
@@ -47,67 +47,56 @@ void p2darr(T* arr, int n, int m) { for (int i = 0; i < n; ++i) { for (int j = 0
 template<typename T>
 void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
+vector<vector<int>>tree;
 
 void testcase(int test) { // testcasesid
 
-    int n, m, k;
-    cin >> n >> m >> k;
-    vector<vector<pair<int, int>>>g(n, vector<pair<int, int>>());
-    map<pair<int, int>, int>getid;
-    for(int i = 0; i < m; ++ i){
-        int u, v, w;
-        cin >> u >> v >> w;
+    int n, m;
+    cin >> n >> m;
+    tree = vector<vector<int>>(n, vector<int>());
+    for(int i = 0; i < n - 1; ++ i){
+        int u, v;
+        cin >> u >> v;
         -- u, -- v;
-        g[u].push_back(make_pair(v, w));
-        g[v].push_back(make_pair(u, w));
-        getid[{u, v}] = i + 1;
-        getid[{v, u}] = i + 1;
+        tree[u].push_back(v);
+        tree[v].push_back(u);
     }
 
-    int dist[n];
-    fill(dist, dist + n, n + 1);
-    dist[0] = 0;
-    priority_queue<array<int, 3>>pq;
-    pq.push({0, 0, 0});
-    // <-weight, -edges_encountered, node>
+    unordered_map<int, int> keys;
 
-    vector<pair<int, int>>par(n);
+    for(int i = 0; i < m; ++ i){
+        int a, b;
+        cin >> a >> b;
+        -- a, -- b;
+        keys[a].insert(i);
+        keys[b].insert(i);
+        ++ indeg[a];
+        ++ indeg[b];
+    }
 
-    while(not pq.empty()){
-        auto arr = pq.top();
-        pq.pop();
-        int edges_enc = arr[1];
-        int node = arr[2];
+    queue<int>leaves;
 
-        for(auto nxt: g[node]){
-            int dis = dist[node] + nxt.second;
-            if(dist[nxt.first] > dis){
-                dist[nxt.first] = dis;
-                pq.push({- dis, edges_enc - 1, nxt.first});
-                par[nxt.first] = make_pair(1-edges_enc, node);
+    for(int i = 0; i < n; ++ i){
+        if(tree[i].size() == 1) leaves.push(i);
+    }
+    vector<int>freq(n, 0);
+    for(int i = 0; i < n; ++ i) freq[i] = keys[i].size();
+
+
+    int ans[n];
+
+    while(not leaves.empty()){
+        int sz = leaves.size();
+        while(sz){
+            -- sz;
+            int leaf = leaves.front();
+            ans[leaf] = freq[leaf];
+            for(auto &nxt: tree[leaf]){
+                // if(vis[nxt]) continue;
+
             }
         }
     }
-
-    vector<array<int, 3>>shortlisted;
-    for(int i = 1; i < n; ++ i){
-        shortlisted.push_back({par[i].first, i, par[i].second});
-    }
-
-    sort(shortlisted.begin(), shortlisted.end());
-
-    while(shortlisted.size() > k) shortlisted.pop_back();
-
-    cout << shortlisted.size() << endl;
-
-    for(int i = 0; i < shortlisted.size(); ++ i)
-    {
-        int u = shortlisted[i][1];
-        int v = shortlisted[i][2];
-        cout << getid[{u, v}] << " ";
-    }
-
-
 
 
     return;
