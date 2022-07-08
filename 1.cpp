@@ -1,4 +1,4 @@
-// problem link: https://cses.fi/problemset/task/1136/
+// problem link:
 #include <bits/stdc++.h>
 using namespace std;
 // #include <ext/pb_ds/assoc_container.hpp>
@@ -47,57 +47,39 @@ void p2darr(T* arr, int n, int m) { for (int i = 0; i < n; ++i) { for (int j = 0
 template<typename T>
 void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
-vector<vector<int>>tree;
 
-void testcase(int test) { // testcasesid
 
-    int n, m;
-    cin >> n >> m;
-    tree = vector<vector<int>>(n, vector<int>());
-    for(int i = 0; i < n - 1; ++ i){
-        int u, v;
-        cin >> u >> v;
-        -- u, -- v;
-        tree[u].push_back(v);
-        tree[v].push_back(u);
+struct segtree {
+    vector<int>t;
+    segtree(int n): t(vector<int>t) {}
+
+    int combine(int i1, int i2){
+        return t[i1] + t[i2];
     }
 
-    unordered_map<int, int> keys;
-
-    for(int i = 0; i < m; ++ i){
-        int a, b;
-        cin >> a >> b;
-        -- a, -- b;
-        keys[a].insert(i);
-        keys[b].insert(i);
-        ++ indeg[a];
-        ++ indeg[b];
-    }
-
-    queue<int>leaves;
-
-    for(int i = 0; i < n; ++ i){
-        if(tree[i].size() == 1) leaves.push(i);
-    }
-    vector<int>freq(n, 0);
-    for(int i = 0; i < n; ++ i) freq[i] = keys[i].size();
-
-
-    int ans[n];
-
-    while(not leaves.empty()){
-        int sz = leaves.size();
-        while(sz){
-            -- sz;
-            int leaf = leaves.front();
-            ans[leaf] = freq[leaf];
-            for(auto &nxt: tree[leaf]){
-                // if(vis[nxt]) continue;
-
-            }
+    void build(vector<int>&arr, int idx, int l, int r){
+        if(l == r){
+            t[idx] = arr[l];
+        }
+        else{
+            int mid = l + (r - l) / 2;
+            build(arr, idx*2, l, mid);
+            build(arr, idx*2 + 1, mid + 1, r);
+            t[idx] = combine(idx*2, idx*2 + 1);
         }
     }
 
+    int query(int idx, int tl, int tr, int l, int r){
+        if
+    }
+
+};
+
+void testcase(int test) { // testcasesid
+
+    int n, q;
+    cin >> n >> q;
+    int arr(n + 1);
 
     return;
 }
