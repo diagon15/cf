@@ -1,12 +1,12 @@
 // problem link:
 #include <bits/stdc++.h>
 using namespace std;
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-using namespace __gnu_pbds;
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
 
-template <class T>
-using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+// template <class T>
+// using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 using ll = long long;
 #define fastio    ios_base::sync_with_stdio(false);
@@ -47,20 +47,55 @@ void p2darr(T* arr, int n, int m) { for (int i = 0; i < n; ++i) { for (int j = 0
 template<typename T>
 void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
+vector<vector<int>>g;
+vector<int>vis;
+
+bool dfs(int node, int cnt, int par){
+    if(vis[node] != -1){
+        return (cnt&1) == (vis[node]&1);
+    }
+    vis[node] = cnt;
+
+    bool res = true;
+    for(auto child: g[node]){
+        if(child == par) continue;
+        res = res and  dfs(child, cnt + 1, node);
+        if(res == false) break;
+    }
+
+    return res;
+}
 
 void testcase(int test) { // testcasesid
 
+
     int n;
     cin >> n;
-    // int arr[n];
+    bool ok = true;
+    g = vector<vector<int>>(n);
+    vis = vector<int>(n, -1);
+    for(int i = 0; i < n; ++ i){
+        int a, b;
+        cin >> a >> b;
+        --a,--b;
+        if(a == b) ok = false;
+        g[a].push_back(b);
+        g[b].push_back(a);
+    }
 
-    vector<int>v(n + 1), ans(n + 1);
-    oset<int>st;
-    for (int i = 1; i <= n; ++i) cin >> v[i], st.insert(i);
+    if(not ok) return no();
+    for(int i = 0;  i < n; ++ i){
+        if(g[i].size() > 2) return no();
+    }
 
-    int a = st.find_by_order(2);
-    pnl(a);
+    int res = 1;
+    for(int i = 0; i < n; ++ i){
+        if(vis[i] == -1)
+        res &= dfs(i, 0, -1);
+    }
 
+    res ? yes() : no();
+    // cout << "Case #" << test << ": " << ans << endl;
     return;
 }
 
@@ -69,7 +104,7 @@ void testcase(int test) { // testcasesid
 int32_t main() {
     fastio;
     int test = 1, z = 1;
-    // cin >> test;
+    cin >> test;
     while (z <= test) {
         testcase(z); z++;
     }

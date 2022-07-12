@@ -1,12 +1,12 @@
-// problem link: https://codeforces.com/contest/1701/problem/D
+// problem link:
 #include <bits/stdc++.h>
 using namespace std;
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-using namespace __gnu_pbds;
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
 
-template <class T>
-using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+// template <class T>
+// using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 using ll = long long;
 #define fastio    ios_base::sync_with_stdio(false);
@@ -33,6 +33,7 @@ void _print(pair<string, string> x) { _print("{"); _print(x.first); _print(",");
 template<class T> void _print(vector<T> v) { dbg << "[";     for (T i : v) _print(i), _print(' ');      dbg << "]"; }
 template<class T> void _print(set<T> v) { dbg << "[";     for (T i : v) _print(i), _print(' ');      dbg << "]"; }
 template<class T> void _print(multiset<T> v) { dbg << "[";     for (T i : v) _print(i), _print(' ');      dbg << "]"; }
+template<class T> void _print(map<T, T> v) { dbg << "[";     for (pair<T, T> i : v) _print(i), _print(' ');      dbg << "]"; }
 
 
 #ifndef ONLINE_JUDGE
@@ -51,42 +52,11 @@ void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].fi
 void testcase(int test) { // testcasesid
 
     int n;
-    cin >> n;
-    // int arr[n];
+    // cin >> n;
+    vector<int>v;
+    v.pop_back();
 
-    vector<int>v(n + 1), ans(n + 1);
-    oset<int>st;
-    priority_queue<pair<int, int>>pq;
-    for (int i = 1; i <= n; ++i) cin >> v[i], st.insert(i), pq.insert({ v[i], i });
-
-    for (int i = n; i > 0; --i) {
-
-        int l = 0, r = (int)st.size() - 1, mid, res = -1;
-
-        while (l <= r) {
-            mid = l + (r - l) / 2;
-            auto it = st.find_by_order(mid);
-            int val = *it;
-            // log(val);
-            // cout<< i << " "<< val << endl;
-            if (i / val < v[i])
-                r = mid - 1;
-            else if (i / val > v[i])
-                l = mid + 1;
-            else
-                res = val, r = mid - 1;
-        }
-        // log(res);
-        // res = *++st.find_by_order(st.order_of_key(res));
-        // assert(res != -1);
-        assert(v[i] == i / res);
-        ans[i] = res;
-        st.erase(res);
-    }
-
-    for (int i = 1; i <= n; ++i) cout << ans[i] << " "; cout << endl;
-
-
+    // cout << "Case #" << test << ": " << ans << endl;
     return;
 }
 
@@ -95,7 +65,7 @@ void testcase(int test) { // testcasesid
 int32_t main() {
     fastio;
     int test = 1, z = 1;
-    cin >> test;
+    // cin >> test;
     while (z <= test) {
         testcase(z); z++;
     }

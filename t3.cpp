@@ -33,6 +33,7 @@ void _print(pair<string, string> x) { _print("{"); _print(x.first); _print(",");
 template<class T> void _print(vector<T> v) { dbg << "[";     for (T i : v) _print(i), _print(' ');      dbg << "]"; }
 template<class T> void _print(set<T> v) { dbg << "[";     for (T i : v) _print(i), _print(' ');      dbg << "]"; }
 template<class T> void _print(multiset<T> v) { dbg << "[";     for (T i : v) _print(i), _print(' ');      dbg << "]"; }
+template<class T> void _print(map<T, T> v) { dbg << "[";     for (pair<T, T> i : v) _print(i), _print(' ');      dbg << "]"; }
 
 
 #ifndef ONLINE_JUDGE
@@ -51,6 +52,8 @@ void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].fi
 void testcase(int test) { // testcasesid
 
 
+
+    // cout << "Case #" << test << ": " << ans << endl;
     return;
 }
 

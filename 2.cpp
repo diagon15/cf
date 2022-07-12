@@ -33,6 +33,7 @@ void _print(pair<string, string> x) { _print("{"); _print(x.first); _print(",");
 template<class T> void _print(vector<T> v) { dbg << "[";     for (T i : v) _print(i), _print(' ');      dbg << "]"; }
 template<class T> void _print(set<T> v) { dbg << "[";     for (T i : v) _print(i), _print(' ');      dbg << "]"; }
 template<class T> void _print(multiset<T> v) { dbg << "[";     for (T i : v) _print(i), _print(' ');      dbg << "]"; }
+template<class T> void _print(map<T, T> v) { dbg << "[";     for (pair<T, T> i : v) _print(i), _print(' ');      dbg << "]"; }
 
 
 #ifndef ONLINE_JUDGE
@@ -47,45 +48,57 @@ void p2darr(T* arr, int n, int m) { for (int i = 0; i < n; ++i) { for (int j = 0
 template<typename T>
 void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
-std::chrono::time_point<std::chrono::high_resolution_clock> start;
-std::chrono::time_point<std::chrono::high_resolution_clock> finish;
-void a(){
-    start = std::chrono::high_resolution_clock::now();
-}
-void b(){
-    finish = std::chrono::high_resolution_clock::now();std::chrono::duration<double> elapsed = finish - start;
-    std::cout << "Elapsed time: " << elapsed.count() << " s\n";
-}
 
 void testcase(int test) { // testcasesid
 
-    int n = 1e5;
-    set<int>st;
-    cout << st.max_size() << endl;
-    for(int i = 0; i < n; ++ i){
-        st.insert(i);
+    int n;
+    cin >> n;
+
+
+    vector<vector<pair<int ,int>>>dp(n, vector<pair<int, int>>(10, {-1, -1}));
+    vector<vector<int>>parent(n, vector<int>(10, -1));
+    for(int i = 1; i < 10; ++ i){
+        dp[0][i] = {i, i};
     }
-    cout <<"copy start\n";
-    set<int>st2,st3;
-    {
-        a();
-        st2 = st;
-        b();
+    // dp[0][0] = {-1, -1};
 
+    for(int i = 0; i < n - 1; ++ i){
+        for(int curr = (i==0?1:0); curr < 10; ++ curr){
+            for(int nxt = 0; nxt < 10; ++ nxt){
+                if(dp[i][curr].first == -1) continue;
+
+                ll product = dp[i][curr].first * nxt;
+                ll sum = dp[i][curr].second + nxt;
+                if(product >= sum){
+                    if(dp[i + 1][nxt].first == -1 or (dp[i + 1][nxt].first != -1 and product < dp[i + 1][nxt].first)){
+                        dp[i + 1][nxt] = {product, sum};
+                        parent[i + 1][nxt] = curr;
+                    }
+                }
+            }
+        }
     }
-    cout <<"move start\n";
-    {
-        a();
-        st3 = set<int>(std::move(st));
-        b();
+
+    int last = -1;
+    ll product = 1e18;
+    for(int i = 0; i < 10; ++ i){
+        if(dp[n - 1][i].first != -1 and dp[n - 1][i].first < product){
+            product = dp[n - 1][i].first;
+            last = i;
+        }
     }
-    pnl(st.size());
-    for(auto &u: st) cout << u <<" "; cout << endl;
-    // cout <<""
+    assert(last != -1);
+
+    string ans = "";
+    for(int i = n - 1; i >= 0; -- i){
+        ans += to_string(last);
+        last = parent[i][last];
+    }
+    reverse(ans.begin(), ans.end());
+    cout <<  ans << endl;
 
 
-
-
+    // cout << "Case #" << test << ": " << ans << endl;
     return;
 }
 
@@ -94,7 +107,7 @@ void testcase(int test) { // testcasesid
 int32_t main() {
     fastio;
     int test = 1, z = 1;
-    // cin >> test;
+    cin >> test;
     while (z <= test) {
         testcase(z); z++;
     }
@@ -105,8 +118,23 @@ for std::lcm use -std=c++17 to compile locally
 
 g++ *.cpp > log.txt 2>&1
 
-topics:
+// above solution is incomplete
 
+Determine a valid integer having K digits such that the product of digits
+of the integer is greater than or equal to the sum of digits of the integer
+ and the product of the digits is minimized. If more than 1 such integer exists,
+determine the smallest possible integer.
+topics:
+1 - 1
+2 - 22
+3 - 123
+4 - 1124
+5 - 11222
+6 - 111126
+7 - 1111134
+8 - 11111223
+9 - 111111135
+10 -1111111144
 ------------ TEEEPS --------------------
 If you have an observation, complement of that observation can be a better observation for code!!
 
