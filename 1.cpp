@@ -48,13 +48,50 @@ void p2darr(T* arr, int n, int m) { for (int i = 0; i < n; ++i) { for (int j = 0
 template<typename T>
 void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
+string ans ;
+ll product = 1e18;
+int n;
+
+bool solve(int idx, int num, ll prod, ll sum, string &str){
+    if(prod < sum) return false;
+    if(idx == n){
+        if(prod > product) return true;
+        product = prod;
+
+        for(int i = 0; i < n; ++ i){
+            if(str[i] < ans[i]){
+                ans = str; break;
+            }
+        }
+        return true;
+    }
+
+    for(ll i = 1; i <= num; ++ i){
+        str += to_string(i);
+        if(solve(idx + 1, i, prod * i, sum + i, str))
+        ;
+        //  return true;
+        str.pop_back();
+    }
+
+    returnd false;
+}
 
 void testcase(int test) { // testcasesid
 
-    int n;
-    // cin >> n;
-    vector<int>v;
-    v.pop_back();
+    cin >> n;
+    ans = "";
+    product = 1e18;
+    for(int i = 0; i < n; ++ i) ans += "9";
+    string str = "";
+    for(int i = 1; i < 10; ++ i){
+        str = to_string(i);
+        // if(
+        solve(1,i, i, i, str);
+        // ) break;
+    }
+    reverse(ans.begin(), ans.end());
+    cout << ans << endl;
 
     // cout << "Case #" << test << ": " << ans << endl;
     return;
@@ -65,7 +102,7 @@ void testcase(int test) { // testcasesid
 int32_t main() {
     fastio;
     int test = 1, z = 1;
-    // cin >> test;
+    cin >> test;
     while (z <= test) {
         testcase(z); z++;
     }

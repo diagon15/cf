@@ -63,8 +63,8 @@ void testcase(int test) { // testcasesid
     // dp[0][0] = {-1, -1};
 
     for(int i = 0; i < n - 1; ++ i){
-        for(int curr = (i==0?1:0); curr < 10; ++ curr){
-            for(int nxt = 0; nxt < 10; ++ nxt){
+        for(int curr = 9; curr > 0; -- curr){
+            for(int nxt = curr; nxt > 0 ; -- nxt){
                 if(dp[i][curr].first == -1) continue;
 
                 ll product = dp[i][curr].first * nxt;
