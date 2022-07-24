@@ -1,12 +1,12 @@
 // problem link:
 #include <bits/stdc++.h>
 using namespace std;
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 
-// template <class T>
-// using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+template <class T>
+using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 using ll = long long;
 #define fastio    ios_base::sync_with_stdio(false);
@@ -33,6 +33,7 @@ void _print(pair<string, string> x) { _print("{"); _print(x.first); _print(",");
 template<class T> void _print(vector<T> v) { dbg << "[";     for (T i : v) _print(i), _print(' ');      dbg << "]"; }
 template<class T> void _print(set<T> v) { dbg << "[";     for (T i : v) _print(i), _print(' ');      dbg << "]"; }
 template<class T> void _print(multiset<T> v) { dbg << "[";     for (T i : v) _print(i), _print(' ');      dbg << "]"; }
+template<class T> void _print(map<T, T> v) { dbg << "[";     for (pair<T, T> i : v) _print(i), _print(' ');      dbg << "]"; }
 
 
 #ifndef ONLINE_JUDGE
@@ -47,54 +48,53 @@ void p2darr(T* arr, int n, int m) { for (int i = 0; i < n; ++i) { for (int j = 0
 template<typename T>
 void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
-vector<vector<int>>g;
-vector<int>vis;
-
-bool dfs(int node, int cnt, int par){
-    if(vis[node] != -1){
-        return (cnt&1) == (vis[node]&1);
-    }
-    vis[node] = cnt;
-
-    bool res = true;
-    for(auto child: g[node]){
-        if(child == par) continue;
-        res = res and  dfs(child, cnt + 1, node);
-        if(res == false) break;
-    }
-
-    return res;
-}
 
 void testcase(int test) { // testcasesid
 
-
     int n;
     cin >> n;
-    bool ok = true;
-    g = vector<vector<int>>(n);
-    vis = vector<int>(n, -1);
-    for(int i = 0; i < n; ++ i){
-        int a, b;
-        cin >> a >> b;
-        --a,--b;
-        if(a == b) ok = false;
-        g[a].push_back(b);
-        g[b].push_back(a);
+    set<pair<int, int>>st;
+    oset<int>osti;
+    multiset<int>mst;
+    for (int i = 0; i < n; ++i) {
+        int val;
+        cin >> val;
+        st.insert({ val, i + 1 });
+        mst.insert(val);
+        osti.insert(i + 1);
+    }
+    int prv_idx = -1;
+    prv_idx = (*st.begin()).second;
+    osti.erase(prv_idx);
+    mst.erase(mst.begin());
+    st.erase(st.begin());
+
+    ll cost = prv_idx;
+    while (mst.size()) {
+        int val = *mst.begin();
+        auto it = st.lower_bound({ val, prv_idx });
+        if (it != st.end() and it->first == val) {
+            int pref_ids = osti.order_of_key(it->second + 1);
+            int rem_ids = osti.order_of_key(prv_idx);
+            cost += pref_ids - rem_ids;
+        }
+        else {
+            it = st.begin();
+            int lesseq_ids = osti.order_of_key(it->second + 1);
+            int further_ids = osti.size() - osti.order_of_key(prv_idx + 1);
+            cost += lesseq_ids + further_ids;
+        }
+
+        prv_idx = it->second;
+        mst.erase(mst.begin());
+        osti.erase(prv_idx);
+        st.erase(it);
+        // cout << cost << endl;
     }
 
-    if(not ok) return no();
-    for(int i = 0;  i < n; ++ i){
-        if(g[i].size() > 2) return no();
-    }
+    cout << cost << endl;
 
-    int res = 1;
-    for(int i = 0; i < n; ++ i){
-        if(vis[i] == -1)
-        res &= dfs(i, 0, -1);
-    }
 
-    res ? yes() : no();
     // cout << "Case #" << test << ": " << ans << endl;
     return;
 }
@@ -104,7 +104,7 @@ void testcase(int test) { // testcasesid
 int32_t main() {
     fastio;
     int test = 1, z = 1;
-    cin >> test;
+    // cin >> test;
     while (z <= test) {
         testcase(z); z++;
     }

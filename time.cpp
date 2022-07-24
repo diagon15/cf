@@ -2,6 +2,20 @@
 #include <iostream>
 //...
 using namespace std;
+
+std::chrono::time_point<std::chrono::high_resolution_clock> timestart;
+std::chrono::time_point<std::chrono::high_resolution_clock> timestop;
+
+void start (){
+    timestart = std::chrono::high_resolution_clock::now();
+}
+
+void stop(bool p = true){
+    timestop = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double>   elapsed = timestop - timestart;
+    std::cout << "Elapsed time: "<<elapsed.count() <<" s\n";
+}
+
 int main(){
 
     // Record start time

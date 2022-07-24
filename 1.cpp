@@ -1,12 +1,12 @@
 // problem link:
 #include <bits/stdc++.h>
 using namespace std;
-// #include <ext/pb_ds/assoc_container.hpp>
-// #include <ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 
-// template <class T>
-// using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+template <class T>
+using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 using ll = long long;
 #define fastio    ios_base::sync_with_stdio(false);
@@ -48,56 +48,63 @@ void p2darr(T* arr, int n, int m) { for (int i = 0; i < n; ++i) { for (int j = 0
 template<typename T>
 void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
-string ans ;
-ll product = 1e18;
-int n;
-
-bool solve(int idx, int num, ll prod, ll sum, string &str){
-    if(prod < sum) return false;
-    if(idx == n){
-        if(prod > product) return true;
-        product = prod;
-
-        for(int i = 0; i < n; ++ i){
-            if(str[i] < ans[i]){
-                ans = str; break;
-            }
-        }
-        return true;
-    }
-
-    for(ll i = 1; i <= num; ++ i){
-        str += to_string(i);
-        if(solve(idx + 1, i, prod * i, sum + i, str))
-        ;
-        //  return true;
-        str.pop_back();
-    }
-
-    returnd false;
-}
 
 void testcase(int test) { // testcasesid
 
-    cin >> n;
-    ans = "";
-    product = 1e18;
-    for(int i = 0; i < n; ++ i) ans += "9";
-    string str = "";
-    for(int i = 1; i < 10; ++ i){
-        str = to_string(i);
-        // if(
-        solve(1,i, i, i, str);
-        // ) break;
+    ll n, k;
+    cin >> n >> k;
+    oset<int>ost;
+    for (int i = 1; i <= n; ++i) ost.insert(i);
+
+    ll sz = n;
+    vector<int>v;
+
+    ll total = 0;
+    // for(int i = n - 2; i >= 0; -- i){
+    for (int i = 0;i < n; ++i) {
+        total += max(1LL, (1LL << (n - i - 2)));
     }
-    reverse(ans.begin(), ans.end());
-    cout << ans << endl;
+    if (total < k) return pnl(-1);
+    // if((1LL<<(n-2)) < k) return pnl(-1);
+    int prvorder = 1;
+
+    while (sz > 1) {
+        ll p = sz;
+        int cnt = 0;
+        ll val = 0;
+        ll prv = 0;
+        while ((val = (1LL << (p - 2))) + prv < k) {
+            // cout <<"val:"<<val<< " ";
+            // k -= val;
+            prv += val;
+            p = max(p - 1, 2LL);
+            ++cnt;
+        }
+        k -= prv;
+        // cout << cnt <<" k:" <<k <<"\n";
+
+        cnt = prvorder - 1 + cnt;
+        prvorder = cnt;
+        cnt = max(0, cnt);
+        // ost.lower_bound(prvval);
+        val = *ost.find_by_order(cnt);
+        v.push_back(val);
+        ost.erase(val);
+        --sz;
+    }
+    v.push_back(*ost.begin());
+
+    for (int i = 0; i < n; ++i) {
+        cout << v[i] << " ";
+    }
+    cout << endl;
 
     // cout << "Case #" << test << ": " << ans << endl;
     return;
 }
 
-
+// 4611686018427387904
+// 9223372036854775808
 
 int32_t main() {
     fastio;
