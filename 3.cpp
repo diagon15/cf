@@ -49,6 +49,32 @@ template<typename T>
 void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
 
+struct segTree {
+
+    ll n, unit = 0;
+    vector<ll>t;
+    segTree(ll n = 0, ll def = unit):t(2*n, def), n(n) {}
+
+    ll merge(ll a, ll b) { return max(a, b); }
+
+    void update(ll pos, ll val){
+        for(t[pos += n] = val; pos/=2; ){
+            t[pos] = merge(t[pos*2], t[pos*2 + 1]);
+        }
+    }
+
+    // [b, e)
+    ll query(ll b, ll e){
+        ll ra = unit, rb = unit;
+        for(b += n, e += n; b < e; b/=2, e/=2){
+            if(b%2) ra = merge(ra, t[b++]);
+            if(e%2) rb = merge(rb, t[--e]);
+        }
+        return merge(ra, rb);
+    }
+
+};
+
 void testcase(int test) { // testcasesid
 
     int n;

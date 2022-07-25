@@ -1,12 +1,12 @@
 // problem link:
 #include <bits/stdc++.h>
 using namespace std;
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-using namespace __gnu_pbds;
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
 
-template <class T>
-using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+// template <class T>
+// using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 using ll = long long;
 #define fastio    ios_base::sync_with_stdio(false);
@@ -51,60 +51,68 @@ void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].fi
 
 void testcase(int test) { // testcasesid
 
-    ll n, k;
-    cin >> n >> k;
-    oset<int>ost;
-    for (int i = 1; i <= n; ++i) ost.insert(i);
-
-    ll sz = n;
-    vector<int>v;
-
-    ll total = 0;
-    // for(int i = n - 2; i >= 0; -- i){
-    for (int i = 0;i < n; ++i) {
-        total += max(1LL, (1LL << (n - i - 2)));
+    int n;
+    cin >> n;
+    vector<int>arr(n);
+    for(int i = 0; i < n; ++ i){
+        cin >> arr[i];
     }
-    if (total < k) return pnl(-1);
-    // if((1LL<<(n-2)) < k) return pnl(-1);
-    int prvorder = 1;
 
-    while (sz > 1) {
-        ll p = sz;
-        int cnt = 0;
-        ll val = 0;
-        ll prv = 0;
-        while ((val = (1LL << (p - 2))) + prv < k) {
-            // cout <<"val:"<<val<< " ";
-            // k -= val;
-            prv += val;
-            p = max(p - 1, 2LL);
-            ++cnt;
+    arr.push_back(0);
+    vector<ll>suf(n + 1);
+    suf[n] = 0;
+    for(int i = n - 1; i >= 0; -- i){
+        suf[i] = suf[i + 1] + arr[i];
+    }
+
+    log(suf);
+    // return ;
+    vector<pair<ll, ll>>stk;
+    stk.push_back({suf[0], 0});
+    for(int i = 1; i < n; ++ i){
+        if(stk.back().first < suf[i]){
+            stk.push_back({suf[i] , i});
         }
-        k -= prv;
-        // cout << cnt <<" k:" <<k <<"\n";
-
-        cnt = prvorder - 1 + cnt;
-        prvorder = cnt;
-        cnt = max(0, cnt);
-        // ost.lower_bound(prvval);
-        val = *ost.find_by_order(cnt);
-        v.push_back(val);
-        ost.erase(val);
-        --sz;
     }
-    v.push_back(*ost.begin());
-
-    for (int i = 0; i < n; ++i) {
-        cout << v[i] << " ";
+    log(stk);
+    for(int i =0;i  < stk.size(); ++ i){
+        // cerr << stk[i].first <<" " << stk[i].second << endl;
     }
-    cout << endl;
+    // return;
+
+    int pos = n;
+    int ans = 0;
+    while(stk.size()){
+        int idx = upper_bound(stk.begin(), stk.end(), pair<ll,ll>{suf[pos], pos}) - stk.begin();
+        // cerr <<"idx1: " << idx <<endl;
+
+        if(idx == stk.size()){
+
+            idx = lower_bound(stk.begin(), stk.end(), pair<ll,ll>{suf[pos], pos -1}) - stk.begin();
+            // cerr <<"idx2: " << idx <<endl;
+
+            if(idx == stk.size()){
+                -- pos;
+                ans += -1;
+            }
+            else pos = stk[idx].second;
+        }
+        else{
+            ans += pos - stk[idx].second;
+            pos = stk[idx].second;
+        }
+
+        while(stk.size() and stk.back().second >= pos) stk.pop_back();
+    }
+
+    cout << ans << endl;
+
 
     // cout << "Case #" << test << ": " << ans << endl;
     return;
 }
 
-// 4611686018427387904
-// 9223372036854775808
+
 
 int32_t main() {
     fastio;
